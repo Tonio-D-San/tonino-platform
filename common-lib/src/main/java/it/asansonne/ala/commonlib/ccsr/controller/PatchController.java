@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.asansonne.ala.commonlib.dto.Request;
-import it.asansonne.authhub.exception.ExceptionMessage;
+import it.asansonne.ala.commonlib.exception.ExceptionMessage;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

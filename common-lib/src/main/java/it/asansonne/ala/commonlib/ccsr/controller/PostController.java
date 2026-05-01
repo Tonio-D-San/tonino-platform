@@ -8,8 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.asansonne.ala.commonlib.dto.Request;
 import it.asansonne.ala.commonlib.dto.Response;
-import it.asansonne.authhub.exception.ExceptionMessage;
-import it.asansonne.payments.dto.response.paypal.OrdersResponse;
+import it.asansonne.ala.commonlib.exception.ExceptionMessage;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import org.springframework.http.HttpStatus;
@@ -24,9 +23,10 @@ public interface PostController<R extends Request, S extends Response> {
 
   @Operation(summary = "resource.create.summary")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "resource.create.201.description",
-          content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-              schema = @Schema(implementation = OrdersResponse.class))),
+      @ApiResponse(
+          responseCode = "201",
+          description = "resource.create.201.description"
+      ),
       @ApiResponse(responseCode = "204", description = "resource.create.204.description",
           content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
       @ApiResponse(responseCode = "400", description = "resource.create.400.description",
