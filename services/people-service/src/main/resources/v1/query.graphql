@@ -1,0 +1,5 @@
+type Query {
+    userByUuid(uuid: ID!): User
+    userByEmail(email: String!): User
+    users(filter: FilterUser, page: Int = 0, size: Int = 20, direction: String): UserPage!
+}

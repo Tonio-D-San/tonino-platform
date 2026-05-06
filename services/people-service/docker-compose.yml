@@ -1,0 +1,61 @@
+name: people-service-local
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+services:
+
+  ##################### Backend ####################
+  people-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: people-service
+    depends_on:
+      - people_postgres_test
+    environment:
+      - APPLICATION_NAME
+      - APPLICATION_VERSION
+      - PROFILE
+
+      - SERVER_PORT
+      - API_VERSION
+
+      - PG_HOSTNAME
+      - POSTGRES_DB_NAME
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_EXTERNAL_PORT
+
+      - KEYCLOAK_URL
+      - KEYCLOAK_REALM_NAME
+      - KEYCLOAK_CLIENT_NAME
+
+      - ADMIN_GROUP_ID
+      - OPERATOR_GROUP_ID
+      - SUPER_ADMIN_GROUP_ID
+
+    networks:
+      - backend-network
+
+  people_postgres_test:
+    image: postgres:17-alpine
+    container_name: people_postgres_test
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+    ports:
+     - "${POSTGRES_EXTERNAL_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB_NAME:-postgres}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5

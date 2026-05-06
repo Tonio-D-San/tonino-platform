@@ -1,0 +1,73 @@
+type User {
+    uuid: ID
+    createdAt: Long
+    updatedAt: Long
+    isDeleted: Boolean
+    name: String
+    surname: String
+    email: String
+    phoneNumber: String
+    group: Group
+}
+
+type Group {
+    uuid: ID
+    createdAt: Long
+    updatedAt: Long
+    role: UserRole
+    path: String
+    description: String
+    businessUsers: [User]
+}
+
+enum UserRole {
+    ADMIN,
+    OPERATOR
+}
+
+input CreateUser {
+    name: String!
+    surname: String!
+    email: String!
+    phoneNumber: String!
+    organizationUuid: ID!
+    role: UserRole!
+}
+
+input UpdateUser {
+    email: String
+    phoneNumber: String
+}
+
+input FilterUser {
+    uuid: ID
+    name: String
+    surname: String
+    isDeleted: Boolean
+    email: String
+    phoneNumber: String
+    organizationUuid: ID
+    role: UserRole
+}
+
+type UserPage implements Page {
+    page: Int!
+    size: Int!
+    totalElements: Int
+    totalPages: Int
+    content: [User!]!
+}
+
+interface Page {
+    page: Int
+    size: Int
+    totalElements: Int
+    totalPages: Int
+}
+
+scalar Long
+
+enum SortDirection {
+    ASC
+    DESC
+}
