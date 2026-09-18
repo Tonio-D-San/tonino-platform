@@ -2,8 +2,6 @@ package it.asansonne.common.jpa.model;
 
 import it.asansonne.common.core.model.Models;
 import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -24,10 +22,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public abstract class BaseModel implements Models {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-
-  @Column(name = "uuid", nullable = false, unique = true, columnDefinition = "UUID")
+  @Column(name = "uuid", columnDefinition = "UUID")
   @Builder.Default
   private UUID uuid = UUID.randomUUID();
 
