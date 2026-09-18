@@ -21,8 +21,14 @@ public enum ErrorMessage {
   // Not found
   DTO_NOT_FOUND("error.common.dto.not.found"),
   MODEL_NOT_FOUND("error.common.model.not.found"),
+  URL_NOT_FOUND("error.common.url.not.found"),
+
+  // Conflict / Duplicate / Data integrity
+  CONFLICT_ERROR("error.common.conflict"),
+  DATA_INTEGRITY("error.common.data.integrity"),
 
   // Technical / System
+  NULL_HTTP_STATUS_CODE("error.common.null.http.status.code"),
   UNCAUGHT_ERROR("error.common.uncaught"),
   NOT_IMPLEMENTED("error.common.method.not.allowed");
 
