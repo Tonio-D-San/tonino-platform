@@ -74,13 +74,6 @@ public class GraphQlExceptionResolver extends DataFetcherExceptionResolverAdapte
         log.warn("Data integrity violation", e);
         return buildError(env, e.getErrorCode(), e.getArgs(), e.getClass(), ErrorType.BAD_REQUEST);
       }
-      case AccessDeniedException accessDeniedException -> {
-        log.warn("Access denied in GraphQL resolver", ex);
-        return GraphqlErrorBuilder.newError(env)
-            .message("Access denied")
-            .errorType(ErrorType.FORBIDDEN)
-            .build();
-      }
       case ForbiddenException e -> {
         log.warn("GraphQL forbidden: code={}, args={}", e.getErrorCode(), e.getArgs());
         return buildError(env, e.getErrorCode(), e.getArgs(), e.getClass(), ErrorType.BAD_REQUEST);
