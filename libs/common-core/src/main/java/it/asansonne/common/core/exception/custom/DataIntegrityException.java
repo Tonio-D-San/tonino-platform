@@ -1,12 +1,13 @@
-package it.asansonne.common.keycloak.exception;
+package it.asansonne.common.core.exception.custom;
 
 import lombok.Getter;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * The type Duplicate field exception.
  */
 @Getter
-public class DuplicateFieldException extends RuntimeException {
+public class DataIntegrityException extends DataIntegrityViolationException {
 
   private final String errorCode;
   private final transient Object[] args;
@@ -17,7 +18,7 @@ public class DuplicateFieldException extends RuntimeException {
    * @param errorCode the errorCode
    * @param args    the args
    */
-  public DuplicateFieldException(String errorCode, Object... args) {
+  public DataIntegrityException(String errorCode, Object... args) {
     super(errorCode);
     this.errorCode = errorCode;
     this.args = args == null ? new Object[0] : args;

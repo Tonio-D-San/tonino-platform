@@ -1,23 +1,23 @@
-package it.asansonne.rest.jpa.peopleservice.exception.custom;
+package it.asansonne.common.core.exception.custom;
 
 import lombok.Getter;
 
 /**
- * The type Argument exception.
+ * The type Inactive user exception.
  */
 @Getter
-public class NotCreatedException extends RuntimeException {
+public class ConflictException extends RuntimeException {
 
   private final String errorCode;
   private final transient Object[] args;
 
   /**
-   * Instantiates a new Not found exception.
+   * Instantiates a new Conflict exception.
    *
    * @param errorCode the message
    * @param args      the args
    */
-  public NotCreatedException(String errorCode, Object... args) {
+  public ConflictException(String errorCode, Object... args) {
     super(errorCode);
     this.errorCode = errorCode;
     this.args = args == null ? new Object[0] : args;

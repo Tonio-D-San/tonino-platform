@@ -1,4 +1,4 @@
-package it.asansonne.rest.jpa.peopleservice.exception.custom;
+package it.asansonne.common.core.exception.custom;
 
 import lombok.Getter;
 
