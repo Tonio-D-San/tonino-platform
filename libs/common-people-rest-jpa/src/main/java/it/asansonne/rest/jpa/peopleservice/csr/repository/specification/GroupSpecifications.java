@@ -2,7 +2,7 @@ package it.asansonne.rest.jpa.peopleservice.csr.repository.specification;
 
 import it.asansonne.common.jpa.repository.specification.ModelSpecifications;
 import it.asansonne.common.jpa.util.SpecificationUtils;
-import it.asansonne.rest.jpa.peopleservice.dto.request.FilterGroup;
+import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.rest.jpa.peopleservice.model.GroupModel;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

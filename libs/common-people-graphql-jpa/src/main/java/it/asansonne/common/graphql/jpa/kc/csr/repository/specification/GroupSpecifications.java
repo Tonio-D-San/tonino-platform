@@ -2,7 +2,7 @@ package it.asansonne.common.graphql.jpa.kc.csr.repository.specification;
 
 import it.asansonne.common.jpa.repository.specification.ModelSpecifications;
 import it.asansonne.common.jpa.util.SpecificationUtils;
-import it.asansonne.common.graphql.jpa.kc.dto.input.FilterGroup;
+import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.common.graphql.jpa.kc.model.GroupModel;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,6 @@
-package it.asansonne.rest.jpa.peopleservice.dto.request;
+package it.asansonne.common.people.dto.request;
 
 import it.asansonne.common.core.dto.Create;
-import it.asansonne.common.rest.dto.Request;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,6 +26,8 @@ public record CreateUser(
     @Email(message = "email non valida")
     String email,
 
+    String pswTemp,
+
     @NotBlank
     @Pattern(
         regexp = "^\\+?\\d{6,13}$",
@@ -39,5 +40,5 @@ public record CreateUser(
 
     @NotNull
     String role
-) implements Create, Request {
+) implements Create {
 }

@@ -1,7 +1,7 @@
 package it.asansonne.common.rest.mapper;
 
+import it.asansonne.common.core.dto.Create;
 import it.asansonne.common.core.model.Models;
-import it.asansonne.common.rest.dto.Request;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -17,7 +17,7 @@ import org.springframework.data.domain.Pageable;
  */
 @SuppressWarnings("unused")
 @FunctionalInterface
-public interface CreateRequestMapper<C extends Request, M extends Models> extends RequestMapper<M>{
+public interface CreateRequestMapper<C extends Create, M extends Models> extends RequestMapper<M>{
   /**
    * To model m.
    *

@@ -1,7 +1,7 @@
 package it.asansonne.common.graphql.jpa.kc.dto.page;
 
 import it.asansonne.common.graphql.dto.page.OutputPage;
-import it.asansonne.common.graphql.jpa.kc.dto.output.Group;
+import it.asansonne.common.people.dto.response.Group;
 import java.util.List;
 import lombok.Builder;
 

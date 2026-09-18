@@ -25,6 +25,10 @@
         </dependency>
         <dependency>
             <groupId>it.asansonne</groupId>
+            <artifactId>common-people-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.asansonne</groupId>
             <artifactId>common-graphql</artifactId>
         </dependency>
         <dependency>

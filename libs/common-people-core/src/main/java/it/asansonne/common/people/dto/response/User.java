@@ -1,6 +1,6 @@
-package it.asansonne.common.graphql.jpa.kc.dto.output;
+package it.asansonne.common.people.dto.response;
 
-import it.asansonne.common.graphql.dto.output.BaseOutput;
+import it.asansonne.common.core.dto.Dto;
 import java.util.UUID;
 import lombok.Builder;
 
@@ -18,5 +18,5 @@ public record User(
     String email,
     String phoneNumber,
     Group group
-) implements BaseOutput {
+) implements Dto {
 }

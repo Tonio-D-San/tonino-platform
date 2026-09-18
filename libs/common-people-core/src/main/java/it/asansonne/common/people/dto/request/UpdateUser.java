@@ -1,13 +1,12 @@
-package it.asansonne.common.graphql.jpa.kc.dto.input;
+package it.asansonne.common.people.dto.request;
 
 import it.asansonne.common.core.dto.Update;
-import it.asansonne.common.graphql.dto.input.Input;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 /**
- * The type Create Business User.
+ * The type Update Business User.
  */
 @Builder
 public record UpdateUser(
@@ -19,5 +18,5 @@ public record UpdateUser(
         message = "phoneNumber non valido"
     )
     String phoneNumber
-) implements Update, Input {
+) implements Update {
 }

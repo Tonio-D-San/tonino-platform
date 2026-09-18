@@ -27,10 +27,9 @@
         <module>libs/common-jpa</module>
         <module>libs/common-graphql</module>
         <module>libs/common-keycloak</module>
+        <module>libs/common-people-core</module>
         <module>libs/common-people-graphql-jpa</module>
         <module>libs/common-people-rest-jpa</module>
-<!--        <module>services/keycloak-service</module>-->
-<!--        <module>services/people-service</module>-->
     </modules>
 
     <!-- ═══════════════════════════════════════════════════════
@@ -129,6 +128,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-keycloak</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>common-people-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

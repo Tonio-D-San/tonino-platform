@@ -1,7 +1,7 @@
 package it.asansonne.rest.jpa.peopleservice.csr.service;
 
 import it.asansonne.common.jpa.service.CrudService;
-import it.asansonne.rest.jpa.peopleservice.dto.request.FilterUser;
+import it.asansonne.common.people.dto.request.FilterUser;
 import it.asansonne.rest.jpa.peopleservice.model.UserModel;
 import java.security.Principal;
 

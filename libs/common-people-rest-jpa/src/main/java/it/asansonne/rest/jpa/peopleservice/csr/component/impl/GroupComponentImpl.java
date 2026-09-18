@@ -1,12 +1,10 @@
 package it.asansonne.rest.jpa.peopleservice.csr.component.impl;
 
+import it.asansonne.common.people.dto.request.CreateGroup;
+import it.asansonne.common.people.dto.request.FilterGroup;
+import it.asansonne.common.people.dto.request.UpdateGroup;
+import it.asansonne.common.people.dto.response.Group;
 import it.asansonne.rest.jpa.peopleservice.csr.component.GroupComponent;
-import it.asansonne.rest.jpa.peopleservice.csr.service.GroupService;
-import it.asansonne.rest.jpa.peopleservice.dto.request.CreateGroup;
-import it.asansonne.rest.jpa.peopleservice.dto.request.FilterGroup;
-import it.asansonne.rest.jpa.peopleservice.dto.request.UpdateGroup;
-import it.asansonne.rest.jpa.peopleservice.dto.response.Group;
-import it.asansonne.rest.jpa.peopleservice.mapper.GroupMapper;
 import java.security.Principal;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +20,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class GroupComponentImpl implements GroupComponent {
-
-  private final GroupService service;
-  private final GroupMapper mapper;
-
 
   @Override
   public Group findByRole(Principal principal, String name) {

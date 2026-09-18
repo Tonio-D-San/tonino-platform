@@ -11,6 +11,7 @@ import lombok.Getter;
 public enum ErrorMessage {
   // Not found
   USER_NOT_FOUND("error.people.user.not.found"),
+  GROUP_NOT_FOUND("error.people.group.not.found"),
 
   // Duplicate
   EMAIL_DUPLICATE("error.people.email.duplicate"),

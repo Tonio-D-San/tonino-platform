@@ -4,13 +4,16 @@ import it.asansonne.common.keycloak.component.KcComponent;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
 import it.asansonne.common.keycloak.dto.output.KcUser;
+import it.asansonne.common.keycloak.exception.KeycloakCallException;
 import it.asansonne.common.keycloak.service.KcService;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class KcComponentImpl implements KcComponent {
@@ -28,22 +31,30 @@ public class KcComponentImpl implements KcComponent {
   }
 
   @Override
-  public KcUser createKeycloakUser(CreateKcUser user) {
-    return service.createKeycloakUser(user);
+  public KcUser createKcUser(CreateKcUser user) {
+    KcUser kcUser = service.createKeycloakUser(user);
+    try {
+      service.addUserToGroup(kcUser.id(), user.groupUuid());
+    } catch (KeycloakCallException ex) {
+      log.error("Errore durante l'aggiunta dell'utente {} al gruppo {} su keycloak",
+          kcUser.email(), user.groupUuid(), ex);
+      this.deleteKcUser(kcUser.id());
+    }
+    return kcUser;
   }
 
   @Override
-  public KcUser updateKeycloakUser(UUID uuid, UpdateKcUser user) {
+  public KcUser updateKcUser(UUID uuid, UpdateKcUser user) {
     return service.updateKeycloakUser(uuid, user);
   }
 
   @Override
-  public Boolean deleteKeycloakUser(UUID uuid) {
+  public Boolean deleteKcUser(UUID uuid) {
     return service.deleteKeycloakUser(uuid);
   }
 
   @Override
-  public Boolean disableKeycloakUser(UUID uuid, Boolean isEnabled) {
+  public Boolean disableKcUser(UUID uuid, Boolean isEnabled) {
     return service.disableKeycloakUser(uuid, isEnabled);
   }
 

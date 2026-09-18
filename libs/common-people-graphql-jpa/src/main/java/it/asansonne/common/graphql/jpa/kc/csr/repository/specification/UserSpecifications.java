@@ -2,7 +2,7 @@ package it.asansonne.common.graphql.jpa.kc.csr.repository.specification;
 
 import it.asansonne.common.jpa.repository.specification.ModelSpecifications;
 import it.asansonne.common.jpa.util.SpecificationUtils;
-import it.asansonne.common.graphql.jpa.kc.dto.input.FilterUser;
+import it.asansonne.common.people.dto.request.FilterUser;
 import it.asansonne.common.graphql.jpa.kc.model.UserModel;
 import it.asansonne.common.graphql.jpa.kc.util.UserSpecificationUtils;
 import lombok.AllArgsConstructor;

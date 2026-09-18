@@ -35,7 +35,7 @@ public interface KcComponent {
    * @param user the business user
    * @return the creation of business user
    */
-  KcUser createKeycloakUser(CreateKcUser user);
+  KcUser createKcUser(CreateKcUser user);
 
   /**
    * Update business user update business user.
@@ -44,7 +44,7 @@ public interface KcComponent {
    * @param user the business user
    * @return the update business user
    */
-  KcUser updateKeycloakUser(UUID uuid, UpdateKcUser user);
+  KcUser updateKcUser(UUID uuid, UpdateKcUser user);
 
   /**
    * Delete business user.
@@ -52,7 +52,7 @@ public interface KcComponent {
    * @param uuid the uuid
    * @return the boolean
    */
-  Boolean deleteKeycloakUser(UUID uuid);
+  Boolean deleteKcUser(UUID uuid);
 
   /**
    * Delete business user.
@@ -61,7 +61,7 @@ public interface KcComponent {
    * @param isEnabled the is enabled
    * @return the boolean
    */
-  Boolean disableKeycloakUser(UUID uuid, Boolean isEnabled);
+  Boolean disableKcUser(UUID uuid, Boolean isEnabled);
 
   Page<KcUser> findAll(Pageable pageable);
 }

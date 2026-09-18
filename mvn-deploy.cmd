@@ -1,1 +1,1 @@
-mvn clean deploy -DskipTests -pl .,libs/common-core,libs/common-rest,libs/common-jpa,libs/common-graphql,libs/common-keycloak, libs/common-people
+mvn clean deploy -DskipTests -pl ., libs/common-core, libs/common-graphql, libs/common-jpa, libs/common-keycloak, libs/common-people-core, libs/common-people-graphql-jpa, libs/common-people-rest-jpa, libs/common-rest

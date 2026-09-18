@@ -6,7 +6,7 @@ import it.asansonne.common.core.exception.custom.NotFoundException;
 import it.asansonne.rest.jpa.peopleservice.csr.repository.UserRepository;
 import it.asansonne.rest.jpa.peopleservice.csr.repository.specification.UserSpecifications;
 import it.asansonne.rest.jpa.peopleservice.csr.service.UserService;
-import it.asansonne.rest.jpa.peopleservice.dto.request.FilterUser;
+import it.asansonne.common.people.dto.request.FilterUser;
 import it.asansonne.rest.jpa.peopleservice.model.UserModel;
 import java.security.Principal;
 import java.util.UUID;

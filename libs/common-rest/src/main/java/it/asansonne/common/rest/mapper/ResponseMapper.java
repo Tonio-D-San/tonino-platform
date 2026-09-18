@@ -1,7 +1,7 @@
 package it.asansonne.common.rest.mapper;
 
+import it.asansonne.common.core.dto.Dto;
 import it.asansonne.common.core.model.Models;
-import it.asansonne.common.rest.dto.Response;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
  * @param <D> Dto parameter
  */
 @SuppressWarnings("unused")
-public interface ResponseMapper<M extends Models, D extends Response> {
+public interface ResponseMapper<M extends Models, D extends Dto> {
 
   /**
    * To a dto list.

@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>it.asansonne</groupId>
         <artifactId>platform</artifactId>
@@ -10,7 +11,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>common-people-rest-jpa</artifactId>
+    <artifactId>common-people-core</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,23 +20,11 @@
     <dependencies>
         <dependency>
             <groupId>it.asansonne</groupId>
-            <artifactId>common-keycloak</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <artifactId>common-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>it.asansonne</groupId>
-            <artifactId>common-people-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>it.asansonne</groupId>
-            <artifactId>common-rest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>it.asansonne</groupId>
-            <artifactId>common-jpa</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
     </dependencies>
-
-
 </project>

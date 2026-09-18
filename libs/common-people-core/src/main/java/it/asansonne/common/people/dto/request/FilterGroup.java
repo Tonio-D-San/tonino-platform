@@ -1,12 +1,11 @@
-package it.asansonne.common.graphql.jpa.kc.dto.input;
+package it.asansonne.common.people.dto.request;
 
 import it.asansonne.common.core.dto.Filter;
-import it.asansonne.common.graphql.dto.input.Input;
 import java.util.UUID;
 import lombok.Builder;
 
 /**
- * The type Organization filter input.
+ * The type Group filter input.
  */
 @Builder
 public record FilterGroup(
@@ -15,5 +14,5 @@ public record FilterGroup(
     String role,
     String path,
     String description
-) implements Filter, Input {
+) implements Filter {
 }

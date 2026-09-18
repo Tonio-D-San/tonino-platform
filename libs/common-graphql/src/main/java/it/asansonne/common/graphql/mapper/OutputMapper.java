@@ -1,7 +1,7 @@
 package it.asansonne.common.graphql.mapper;
 
+import it.asansonne.common.core.dto.Dto;
 import it.asansonne.common.core.model.Models;
-import it.asansonne.common.graphql.dto.output.Output;
 import it.asansonne.common.graphql.dto.page.Paginate;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageImpl;
  * @param <P> the type parameter
  */
 @SuppressWarnings("unused")
-public interface OutputMapper<M extends Models, O extends Output, P extends Paginate> {
+public interface OutputMapper<M extends Models, O extends Dto, P extends Paginate> {
   /**
    * To dto o.
    *

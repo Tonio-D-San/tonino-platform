@@ -7,7 +7,7 @@ import it.asansonne.common.core.exception.custom.NotFoundException;
 import it.asansonne.common.graphql.jpa.kc.csr.repository.GroupRepository;
 import it.asansonne.common.graphql.jpa.kc.csr.repository.specification.GroupSpecifications;
 import it.asansonne.common.graphql.jpa.kc.csr.service.GroupService;
-import it.asansonne.common.graphql.jpa.kc.dto.input.FilterGroup;
+import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.common.graphql.jpa.kc.model.GroupModel;
 import java.security.Principal;
 import java.util.UUID;

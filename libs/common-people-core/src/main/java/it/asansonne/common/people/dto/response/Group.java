@@ -1,6 +1,6 @@
-package it.asansonne.rest.jpa.peopleservice.dto.response;
+package it.asansonne.common.people.dto.response;
 
-import it.asansonne.common.rest.dto.Response;
+import it.asansonne.common.core.dto.Dto;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -17,5 +17,5 @@ public record Group(
     String path,
     String description,
     List<User> users
-) implements Response {
+) implements Dto {
 }

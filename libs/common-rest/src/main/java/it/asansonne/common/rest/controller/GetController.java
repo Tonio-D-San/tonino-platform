@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import it.asansonne.common.core.dto.Dto;
 import it.asansonne.common.core.dto.Filter;
 import it.asansonne.common.core.exception.ExceptionMessage;
-import it.asansonne.common.rest.dto.Response;
 import it.asansonne.common.rest.schema.PageUserSchema;
 import java.security.Principal;
 import java.util.UUID;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @SuppressWarnings("unused")
-public interface GetController<F extends Filter, S extends Response> {
+public interface GetController<F extends Filter, S extends Dto> {
   /**
    * The constant UPDATED_AT.
    */

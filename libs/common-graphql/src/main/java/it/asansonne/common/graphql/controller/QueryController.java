@@ -1,14 +1,14 @@
 package it.asansonne.common.graphql.controller;
 
+import it.asansonne.common.core.dto.Dto;
 import it.asansonne.common.core.dto.Filter;
-import it.asansonne.common.graphql.dto.output.Output;
 import it.asansonne.common.graphql.dto.page.OutputPage;
 import java.security.Principal;
 import java.util.UUID;
 import org.springframework.graphql.data.method.annotation.Argument;
 
 @SuppressWarnings("unused")
-public interface QueryController<O extends Output, F extends Filter> {
+public interface QueryController<O extends Dto, F extends Filter> {
   /**
    * The constant UPDATED_AT.
    */

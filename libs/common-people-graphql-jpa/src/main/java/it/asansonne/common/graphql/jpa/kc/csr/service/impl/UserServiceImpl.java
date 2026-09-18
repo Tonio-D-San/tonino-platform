@@ -6,7 +6,7 @@ import it.asansonne.common.core.exception.custom.NotFoundException;
 import it.asansonne.common.graphql.jpa.kc.csr.repository.UserRepository;
 import it.asansonne.common.graphql.jpa.kc.csr.repository.specification.UserSpecifications;
 import it.asansonne.common.graphql.jpa.kc.csr.service.UserService;
-import it.asansonne.common.graphql.jpa.kc.dto.input.FilterUser;
+import it.asansonne.common.people.dto.request.FilterUser;
 import it.asansonne.common.graphql.jpa.kc.model.UserModel;
 import java.security.Principal;
 import java.util.UUID;

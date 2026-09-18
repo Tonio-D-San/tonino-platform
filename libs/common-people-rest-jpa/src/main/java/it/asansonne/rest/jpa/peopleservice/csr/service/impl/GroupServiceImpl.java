@@ -8,7 +8,7 @@ import it.asansonne.common.core.exception.custom.NotFoundException;
 import it.asansonne.rest.jpa.peopleservice.csr.repository.GroupRepository;
 import it.asansonne.rest.jpa.peopleservice.csr.repository.specification.GroupSpecifications;
 import it.asansonne.rest.jpa.peopleservice.csr.service.GroupService;
-import it.asansonne.rest.jpa.peopleservice.dto.request.FilterGroup;
+import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.rest.jpa.peopleservice.model.GroupModel;
 import java.security.Principal;
 import java.util.UUID;

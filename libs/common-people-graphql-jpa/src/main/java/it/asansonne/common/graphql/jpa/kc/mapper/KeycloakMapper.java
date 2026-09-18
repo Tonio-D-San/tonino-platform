@@ -5,7 +5,7 @@ import static it.asansonne.common.core.enums.ErrorMessage.BAD_REQUEST;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.output.KcUser;
 import it.asansonne.common.core.exception.custom.DataIntegrityException;
-import it.asansonne.common.graphql.jpa.kc.dto.input.CreateUser;
+import it.asansonne.common.people.dto.request.CreateUser;
 import it.asansonne.common.graphql.jpa.kc.model.GroupModel;
 import it.asansonne.common.graphql.jpa.kc.model.UserModel;
 import java.util.UUID;

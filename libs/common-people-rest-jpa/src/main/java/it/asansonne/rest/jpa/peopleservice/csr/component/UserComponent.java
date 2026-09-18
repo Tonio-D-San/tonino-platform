@@ -1,10 +1,10 @@
 package it.asansonne.rest.jpa.peopleservice.csr.component;
 
 import it.asansonne.common.rest.component.CrudComponent;
-import it.asansonne.rest.jpa.peopleservice.dto.request.CreateUser;
-import it.asansonne.rest.jpa.peopleservice.dto.request.FilterUser;
-import it.asansonne.rest.jpa.peopleservice.dto.request.UpdateUser;
-import it.asansonne.rest.jpa.peopleservice.dto.response.User;
+import it.asansonne.common.people.dto.request.CreateUser;
+import it.asansonne.common.people.dto.request.FilterUser;
+import it.asansonne.common.people.dto.request.UpdateUser;
+import it.asansonne.common.people.dto.response.User;
 import java.security.Principal;
 
 /**

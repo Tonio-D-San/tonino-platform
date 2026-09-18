@@ -1,12 +1,11 @@
-package it.asansonne.rest.jpa.peopleservice.dto.request;
+package it.asansonne.common.people.dto.request;
 
 import it.asansonne.common.core.dto.Create;
-import it.asansonne.common.rest.dto.Request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 /**
- * The type Create Business User.
+ * The type Create Group.
  */
 @Builder
 public record CreateGroup(
@@ -18,5 +17,5 @@ public record CreateGroup(
     String path,
 
     String description
-) implements Create, Request {
+) implements Create {
 }
