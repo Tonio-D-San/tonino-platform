@@ -4,7 +4,7 @@ import static it.asansonne.common.core.enums.ErrorMessage.BAD_REQUEST;
 
 import it.asansonne.common.graphql.dto.page.OutputPage;
 import it.asansonne.common.keycloak.component.KcComponent;
-import it.asansonne.common.keycloak.exception.DataIntegrityException;
+import it.asansonne.common.core.exception.custom.DataIntegrityException;
 import it.asansonne.common.graphql.jpa.kc.csr.component.UserComponent;
 import it.asansonne.common.graphql.jpa.kc.csr.service.GroupService;
 import it.asansonne.common.graphql.jpa.kc.csr.service.UserService;
