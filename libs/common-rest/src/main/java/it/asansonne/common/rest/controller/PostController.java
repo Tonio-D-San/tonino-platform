@@ -6,10 +6,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import it.asansonne.common.core.dto.Create;
 import it.asansonne.common.core.exception.ExceptionMessage;
-import it.asansonne.common.rest.dto.Request;
 import it.asansonne.common.rest.dto.Response;
-import jakarta.validation.Valid;
 import java.security.Principal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @SuppressWarnings("unused")
-public interface PostController<R extends Request, S extends Response> {
+public interface PostController<C extends Create, S extends Response> {
 
   @Operation(summary = "resource.create.summary")
   @ApiResponses(value = {
@@ -109,5 +108,5 @@ public interface PostController<R extends Request, S extends Response> {
   @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE,
       consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.CREATED)
-  S create(Principal principal, @Valid @RequestBody R request);
+  S create(Principal principal, @RequestBody C request);
 }

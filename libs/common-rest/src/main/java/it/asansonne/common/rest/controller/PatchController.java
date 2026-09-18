@@ -1,13 +1,13 @@
 package it.asansonne.common.rest.controller;
 
-import it.asansonne.common.core.exception.ExceptionMessage;
-import it.asansonne.common.rest.dto.Request;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import it.asansonne.common.core.dto.Update;
+import it.asansonne.common.core.exception.ExceptionMessage;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @SuppressWarnings("unused")
-public interface PatchController<R extends Request> {
+public interface PatchController<U extends Update> {
 
   @Operation(summary = "resource.update.summary")
   @ApiResponses(value = {
@@ -141,6 +141,6 @@ public interface PatchController<R extends Request> {
               schema = @Schema(implementation = ExceptionMessage.class)))})
   @ResponseStatus(HttpStatus.OK)
   void updateByUuid(
-      @PathVariable UUID uuid, R request
+      @PathVariable UUID uuid, U request
   );
 }

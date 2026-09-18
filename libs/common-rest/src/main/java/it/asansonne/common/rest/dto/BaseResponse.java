@@ -2,19 +2,14 @@ package it.asansonne.common.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @SuperBuilder
 @Getter
 @Setter
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 public abstract class BaseResponse implements Response {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   @Schema(
@@ -26,7 +21,7 @@ public abstract class BaseResponse implements Response {
 
   @Schema(
       description = "Last update",
-      name = "updateAt",
+      name = "updatedAt",
       type = "Long",
       example = "1769300745474"
   )

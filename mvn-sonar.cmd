@@ -1,0 +1,1 @@
+mvn clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=platform -Dsonar.projectName=platform -Dsonar.host.url=http://localhost:9000 -Dsonar.token=${SONAR_USER_TOKEN}

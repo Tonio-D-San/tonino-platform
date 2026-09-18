@@ -1,6 +1,6 @@
 package it.asansonne.common.graphql.component;
 
-import it.asansonne.common.graphql.dto.input.Create;
+import it.asansonne.common.core.dto.Create;
 import it.asansonne.common.graphql.dto.output.Output;
 import java.security.Principal;
 

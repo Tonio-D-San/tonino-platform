@@ -1,0 +1,57 @@
+"""
+Campi comuni esposti dagli output GraphQL della piattaforma.
+"""
+interface BaseOutput {
+    """
+    Identificativo pubblico stabile della risorsa.
+    """
+    uuid: ID!
+
+    """
+    Timestamp di creazione espresso in epoch milliseconds.
+    """
+    createdAt: Long
+
+    """
+    Timestamp di ultimo aggiornamento espresso in epoch milliseconds.
+    """
+    updatedAt: Long
+
+    """
+    Indica se la risorsa è attiva.
+    """
+    isActive: Boolean
+}
+
+"""
+Contratto comune per tutte le risposte paginate.
+Non contiene il campo `content` perché GraphQL non supporta i generics.
+Ogni Page concreta deve dichiarare il proprio content tipizzato.
+"""
+interface Page {
+    """
+    Numero della pagina corrente.
+    Solitamente zero-based, quindi la prima pagina è 0.
+    """
+    page: Int!
+
+    """
+    Numero massimo di elementi richiesti per pagina.
+    """
+    size: Int!
+
+    """
+    Numero totale di elementi disponibili.
+    """
+    totalElements: Int!
+
+    """
+    Numero totale di pagine disponibili.
+    """
+    totalPages: Int!
+}
+
+"""
+Timestamp numerico a 64 bit.
+"""
+scalar Long

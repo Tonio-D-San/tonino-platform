@@ -1,6 +1,6 @@
 package it.asansonne.common.graphql.schema;
 
-import it.asansonne.common.rest.dto.BaseResponse;
+import it.asansonne.common.graphql.dto.output.BaseOutput;
 import java.util.List;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
  * It is only a schema for Swagger documentation.
  */
 @SuppressWarnings("unused")
-public final class PageUserSchema extends PageImpl<BaseResponse> {
+public final class PageUserSchema extends PageImpl<BaseOutput> {
 
   /**
    * Instantiates a new Page user schema.
@@ -20,7 +20,7 @@ public final class PageUserSchema extends PageImpl<BaseResponse> {
    * @param pageable the pageable
    * @param total    the total
    */
-  public PageUserSchema(List<BaseResponse> content, Pageable pageable, long total) {
+  public PageUserSchema(List<BaseOutput> content, Pageable pageable, long total) {
     super(content, pageable, total);
   }
 
@@ -29,7 +29,7 @@ public final class PageUserSchema extends PageImpl<BaseResponse> {
    *
    * @param content the content
    */
-  public PageUserSchema(List<BaseResponse> content) {
+  public PageUserSchema(List<BaseOutput> content) {
     super(content);
   }
 }

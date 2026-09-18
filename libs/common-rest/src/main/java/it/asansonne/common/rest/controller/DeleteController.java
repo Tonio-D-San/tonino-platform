@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.asansonne.common.core.exception.ExceptionMessage;
+import java.security.Principal;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -87,6 +88,7 @@ public interface DeleteController {
   @DeleteMapping(value = "/{uuid}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   void deleteByUuid(
+      Principal principal,
       @Parameter(
           name = "uuid",
           description = "Topic uuid",

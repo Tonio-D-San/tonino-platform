@@ -1,8 +1,8 @@
 package it.asansonne.common.graphql.mapper;
 
-import it.asansonne.common.graphql.dto.input.Create;
-import it.asansonne.common.graphql.dto.input.Update;
-import it.asansonne.common.jpa.model.BaseModel;
+import it.asansonne.common.core.dto.Create;
+import it.asansonne.common.core.dto.Update;
+import it.asansonne.common.core.model.Models;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  * @param <M> the type parameter
  */
 @SuppressWarnings("unused")
-public interface InputMapper<C extends Create, U extends Update, M extends BaseModel> {
+public interface InputMapper<C extends Create, U extends Update, M extends Models> {
   /**
    * To model m.
    *

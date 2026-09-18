@@ -1,7 +1,7 @@
 package it.asansonne.common.graphql.controller;
 
-import it.asansonne.common.graphql.dto.input.Create;
-import it.asansonne.common.graphql.dto.input.Update;
+import it.asansonne.common.core.dto.Create;
+import it.asansonne.common.core.dto.Update;
 import it.asansonne.common.graphql.dto.output.Output;
 import jakarta.validation.Valid;
 import java.security.Principal;

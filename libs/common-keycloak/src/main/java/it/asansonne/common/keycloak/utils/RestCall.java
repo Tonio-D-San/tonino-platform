@@ -8,6 +8,17 @@ import static it.asansonne.common.keycloak.enums.ErrorMessage.CONFLICT_ERROR;
 import static it.asansonne.common.keycloak.enums.ErrorMessage.KEYCLOAK_CALL_ERROR;
 import static it.asansonne.common.keycloak.enums.ErrorMessage.NULL_HTTP_STATUS_CODE;
 import static it.asansonne.common.keycloak.enums.ErrorMessage.URL_NOT_FOUND;
+import static it.asansonne.common.keycloak.enums.KcCredentialPayloadKey.TEMPORARY;
+import static it.asansonne.common.keycloak.enums.KcCredentialPayloadKey.TYPE;
+import static it.asansonne.common.keycloak.enums.KcCredentialPayloadKey.VALUE;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.CREDENTIALS;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL_VERIFIED;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.ENABLED;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.FIRST_NAME;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.LAST_NAME;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.REQUIRED_ACTIONS;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.USERNAME;
 
 import it.asansonne.common.core.exception.custom.BadRequestException;
 import it.asansonne.common.core.exception.custom.ForbiddenException;
@@ -15,8 +26,9 @@ import it.asansonne.common.core.exception.custom.NotFoundException;
 import it.asansonne.common.core.exception.custom.NullStatusException;
 import it.asansonne.common.core.exception.custom.UnauthorizedException;
 import it.asansonne.common.core.exception.custom.UncaughtException;
-import it.asansonne.common.keycloak.dto.input.CreateKeycloakUser;
-import it.asansonne.common.keycloak.dto.input.UpdateKeycloakUser;
+import it.asansonne.common.keycloak.dto.input.CreateKcUser;
+import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
+import it.asansonne.common.keycloak.enums.RequiredAction;
 import it.asansonne.common.keycloak.exception.ConflictException;
 import it.asansonne.common.keycloak.exception.KeycloakCallException;
 import java.util.LinkedHashMap;
@@ -41,9 +53,6 @@ public class RestCall {
 
   private final RestTemplate restTemplate;
 
-  public static final String EMAIL = "email";
-  public static final String ENABLED = "enabled";
-
   public <T> ResponseEntity<T> doRequest(String url, HttpMethod method, HttpEntity<?> entity,
                                                 Class<T> responseType) {
     try {
@@ -54,8 +63,10 @@ public class RestCall {
           "Keycloak HTTP error: method={}, url={}, status={}, body={}",
           method, url, status, ex.getResponseBodyAsString()
       );
+      if (status == null) {
+        throw new NullStatusException(NULL_HTTP_STATUS_CODE.getCode());
+      }
       switch (status) {
-        case null -> throw new NullStatusException(NULL_HTTP_STATUS_CODE.getCode());
         case UNAUTHORIZED -> throw new UnauthorizedException(UNAUTHORIZED_ACCESS.getCode());
         case FORBIDDEN -> throw new ForbiddenException(FORBIDDEN.getCode());
         case NOT_FOUND -> throw new NotFoundException(URL_NOT_FOUND.getCode(), url);
@@ -69,32 +80,43 @@ public class RestCall {
     }
   }
 
-  public static Map<String, Object> buildPayload(CreateKeycloakUser request) {
+  public static Map<String, Object> buildPayload(CreateKcUser request) {
     Map<String, Object> payload = new LinkedHashMap<>();
-    payload.put(EMAIL, request.email());
-    payload.put("firstName", request.name());
-    payload.put("lastName", request.surname());
-    payload.put(ENABLED, true);
-    payload.put("emailVerified", true);
-    payload.put("credentials", List.of(
+
+    EMAIL.put(payload, request.email());
+    USERNAME.put(payload, request.email());
+    FIRST_NAME.put(payload, request.name());
+    LAST_NAME.put(payload, request.surname());
+    ENABLED.put(payload, true);
+    EMAIL_VERIFIED.put(payload, true);
+    CREDENTIALS.put(payload, List.of(
         Map.of(
-            "type", "password",
-            "value", request.passwordTemp(),
-            "temporary", true
+            TYPE.getKey(), "password",
+            VALUE.getKey(), request.passwordTemp(),
+            TEMPORARY.getKey(), true
         )
     ));
+    if (request.requiredActions() != null && !request.requiredActions().isEmpty()) {
+      REQUIRED_ACTIONS.put(
+          payload,
+          request.requiredActions()
+              .stream()
+              .map(RequiredAction::getValue)
+              .toList()
+      );
+    }
     return payload;
   }
 
-  public static Map<String, Object> buildPayload(UpdateKeycloakUser request) {
+  public static Map<String, Object> buildPayload(UpdateKcUser request) {
     Map<String, Object> payload = new LinkedHashMap<>();
-    payload.put(EMAIL, request.email());
+    payload.put(EMAIL.getKey(), request.email());
     return payload;
   }
 
   public static Map<String, Object> buildPayload(Boolean isEnabled) {
     Map<String, Object> payload = new LinkedHashMap<>();
-    payload.put(ENABLED, isEnabled);
+    payload.put(ENABLED.getKey(), isEnabled);
     return payload;
   }
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -24,7 +25,6 @@ import lombok.experimental.SuperBuilder;
 public abstract class BaseModel implements Models {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
   private Long id;
 
   @Column(name = "uuid", nullable = false, unique = true, columnDefinition = "UUID")
@@ -44,8 +44,33 @@ public abstract class BaseModel implements Models {
   @Builder.Default
   protected Boolean isActive = true;
 
+  @PrePersist
+  protected void onCreate() {
+    long now = System.currentTimeMillis();
+    if (this.uuid == null) {
+      this.uuid = UUID.randomUUID();
+    }
+    if (this.createdAt == null) {
+      this.createdAt = now;
+    }
+    if (this.updatedAt == null) {
+      this.updatedAt = now;
+    }
+    if (this.isActive == null) {
+      this.isActive = true;
+    }
+  }
+
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = System.currentTimeMillis();
+  }
+
+  public void activate() {
+    this.isActive = true;
+  }
+
+  public void deactivate() {
+    this.isActive = false;
   }
 }

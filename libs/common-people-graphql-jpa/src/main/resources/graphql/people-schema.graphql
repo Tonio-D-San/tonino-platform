@@ -1,0 +1,121 @@
+"""
+Rappresenta un utente applicativo gestito dalla piattaforma.
+
+L'utente contiene i dati anagrafici principali, i contatti e il gruppo/ruolo
+associato. Non espone l'id tecnico del database, ma solo l'identificativo
+pubblico `uuid`.
+"""
+interface User implements BaseOutput {
+    """
+    Identificativo pubblico stabile dell'utente.
+    """
+    uuid: ID!
+
+    """
+    Timestamp di creazione dell'utente espresso in epoch milliseconds.
+    """
+    createdAt: Long
+
+    """
+    Timestamp di ultimo aggiornamento dell'utente espresso in epoch milliseconds.
+    """
+    updatedAt: Long
+
+    """
+    Indica se l'utente è attivo.
+    """
+    isActive: Boolean
+
+    """
+    Nome dell'utente.
+    """
+    name: String
+
+    """
+    Cognome dell'utente.
+    """
+    surname: String
+
+    """
+    Indirizzo email dell'utente.
+    Deve essere un indirizzo email valido.
+    """
+    email: String
+
+    """
+    Numero di telefono dell'utente.
+
+    Formato atteso:
+    - può iniziare con '+'
+    - deve contenere solo cifre
+    - lunghezza tra 6 e 13 cifre
+    """
+    phoneNumber: String
+
+    """
+    Gruppo associato all'utente.
+    Il gruppo rappresenta il ruolo o la collocazione logica dell'utente
+    all'interno della piattaforma.
+    """
+    group: Group
+}
+
+"""
+Rappresenta un gruppo applicativo.
+
+Il gruppo identifica un ruolo o una posizione logica nella gerarchia applicativa.
+Può essere usato per organizzare utenti, permessi o percorsi logici.
+"""
+interface Group implements BaseOutput {
+    """
+    Identificativo pubblico stabile del gruppo.
+    """
+    uuid: ID!
+
+    """
+    Timestamp di creazione del gruppo espresso in epoch milliseconds.
+    """
+    createdAt: Long
+
+    """
+    Timestamp di ultimo aggiornamento del gruppo espresso in epoch milliseconds.
+    """
+    updatedAt: Long
+
+    """
+    Indica se il gruppo è attivo.
+    """
+    isActive: Boolean
+
+    """
+    Ruolo associato al gruppo.
+
+    Esempi possibili:
+    - ADMIN
+    - OPERATOR
+    - USER
+    - MANAGER
+    """
+    role: String
+
+    """
+    Percorso logico o gerarchico del gruppo.
+
+    Può essere usato per rappresentare una struttura ad albero o una posizione
+    interna alla piattaforma.
+    """
+    path: String
+
+    """
+    Descrizione testuale del gruppo.
+    """
+    description: String
+
+    """
+    Lista degli utenti associati al gruppo.
+
+    Attenzione: questo campo può generare query pesanti se il gruppo contiene
+    molti utenti. Valuta paginazione o resolver dedicati se la cardinalità cresce.
+    """
+    users: [User!]
+}

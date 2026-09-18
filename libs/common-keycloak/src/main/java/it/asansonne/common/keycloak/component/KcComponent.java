@@ -1,8 +1,8 @@
 package it.asansonne.common.keycloak.component;
 
-import it.asansonne.common.keycloak.dto.input.CreateKeycloakUser;
-import it.asansonne.common.keycloak.dto.input.UpdateKeycloakUser;
-import it.asansonne.common.keycloak.dto.output.KeycloakUser;
+import it.asansonne.common.keycloak.dto.input.CreateKcUser;
+import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
+import it.asansonne.common.keycloak.dto.output.KcUser;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 /**
  * The interface Business user component.
  */
+@SuppressWarnings("unused")
 public interface KcComponent {
 
   /**
@@ -18,7 +19,7 @@ public interface KcComponent {
    * @param uuid the uuid
    * @return the keycloak user
    */
-  KeycloakUser findByUuid(UUID uuid);
+  KcUser findByUuid(UUID uuid);
 
   /**
    * Find by email keycloak user.
@@ -26,7 +27,7 @@ public interface KcComponent {
    * @param email the email
    * @return the keycloak user
    */
-  KeycloakUser findByEmail(String email);
+  KcUser findByEmail(String email);
 
   /**
    * Create business user create business user.
@@ -34,7 +35,7 @@ public interface KcComponent {
    * @param user the business user
    * @return the creation of business user
    */
-  KeycloakUser createKeycloakUser(CreateKeycloakUser user);
+  KcUser createKeycloakUser(CreateKcUser user);
 
   /**
    * Update business user update business user.
@@ -43,7 +44,7 @@ public interface KcComponent {
    * @param user the business user
    * @return the update business user
    */
-  KeycloakUser updateKeycloakUser(UUID uuid, UpdateKeycloakUser user);
+  KcUser updateKeycloakUser(UUID uuid, UpdateKcUser user);
 
   /**
    * Delete business user.
@@ -62,5 +63,5 @@ public interface KcComponent {
    */
   Boolean disableKeycloakUser(UUID uuid, Boolean isEnabled);
 
-  Page<KeycloakUser> findAll(Pageable pageable);
+  Page<KcUser> findAll(Pageable pageable);
 }

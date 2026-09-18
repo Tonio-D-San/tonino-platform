@@ -12,8 +12,10 @@ import org.springframework.data.repository.NoRepositoryBean;
 @SuppressWarnings("unused")
 @NoRepositoryBean
 public interface FindRepository<M extends BaseModel> extends
-    JpaRepository<M, Long>, JpaSpecificationExecutor<M>
+    JpaRepository<M, UUID>, JpaSpecificationExecutor<M>
 {
+  boolean existsByUuid(UUID uuid);
+
   Optional<M> findByUuid(UUID uuid);
 
   Page<M> findByIsActive(Boolean isActive, Pageable pageable);

@@ -61,4 +61,12 @@ public interface ResponseMapper<M extends Models, D extends Response> {
    */
   D toDto(M model);
 
+  /**
+   * To little dto d.
+   *
+   * @param model the model
+   * @return the d
+   */
+  D toLittleDto(M model);
+
 }

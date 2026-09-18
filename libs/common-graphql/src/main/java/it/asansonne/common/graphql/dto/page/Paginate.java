@@ -5,5 +5,7 @@ import it.asansonne.common.core.dto.Dto;
 /**
  * The interface Paginate.
  */
+@SuppressWarnings("unused")
 public interface Paginate extends Dto {
+
 }
