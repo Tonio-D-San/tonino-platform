@@ -9,14 +9,14 @@ import org.springframework.data.jpa.domain.Specification;
 public final class UserSpecificationUtils {
 
   public static <T> Specification<T> hasEmail(String email) {
-    return (root, query, cb) ->
+    return (root, _, cb) ->
         hasText(email)
             ? cb.equal(cb.lower(root.get("email")), email.trim().toLowerCase())
             : null;
   }
 
   public static <T> Specification<T> hasPhoneNumber(String phoneNumber) {
-    return (root, query, cb) ->
+    return (root, _, cb) ->
         hasText(phoneNumber)
             ? cb.equal(root.get("phoneNumber"), phoneNumber.trim())
             : null;

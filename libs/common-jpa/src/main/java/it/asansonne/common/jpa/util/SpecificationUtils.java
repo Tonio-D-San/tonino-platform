@@ -59,7 +59,7 @@ public final class SpecificationUtils {
    * @return the specification
    */
   public static <T> Specification<T> isActive(Boolean isActive) {
-    return (root, query, cb) ->
+    return (root, _, cb) ->
         isActive == null ? null : cb.equal(root.get("isActive"), isActive);
   }
 
@@ -71,7 +71,7 @@ public final class SpecificationUtils {
    * @return the specification
    */
   public static <T> Specification<T> hasUuid(UUID uuid) {
-    return (root, query, cb) ->
+    return (root, _, cb) ->
         uuid == null ? null : cb.equal(root.get("uuid"), uuid);
   }
 
@@ -86,7 +86,7 @@ public final class SpecificationUtils {
   public static <T> Specification<T> likeIgnoringShortValue(
       String entityField, String filterValue
   ) {
-    return (root, query, cb) -> {
+    return (root, _, cb) -> {
       if (!hasText(filterValue)) {
         return null;
       }

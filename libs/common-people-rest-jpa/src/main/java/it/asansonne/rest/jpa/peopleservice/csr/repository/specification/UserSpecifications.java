@@ -43,7 +43,7 @@ public final class UserSpecifications implements ModelSpecifications<UserModel, 
    * @return the specification
    */
   public static Specification<UserModel> hasRole(String role) {
-    return (root, query, cb) ->
+    return (root, _, cb) ->
         role == null
             ? null
             : cb.equal(root.join("group").get("role"), role);
