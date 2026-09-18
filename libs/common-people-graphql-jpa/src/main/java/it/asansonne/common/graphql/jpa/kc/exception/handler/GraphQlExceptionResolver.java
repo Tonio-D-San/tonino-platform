@@ -14,7 +14,6 @@ import it.asansonne.common.core.exception.custom.DataIntegrityException;
 import it.asansonne.common.core.exception.custom.DuplicateFieldException;
 import it.asansonne.common.keycloak.exception.KeycloakCallException;
 import jakarta.validation.ConstraintViolationException;
-import java.nio.file.AccessDeniedException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
