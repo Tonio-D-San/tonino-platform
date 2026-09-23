@@ -1,14 +1,10 @@
 name: tonino-platform
 
-volumes:
-  sonarqube_data:
-  sonarqube_extensions:
-
 services:
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
-    restart: always
+    restart: no
     ports:
       - "9000:9000"
     environment:
@@ -20,3 +16,74 @@ services:
       nofile:
         soft: 65536
         hard: 65536
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres
+    restart: no
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_EXTERNAL_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ${DB_INIT_FOLDER}/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5
+    container_name: keycloak
+    restart: no
+    command: start-dev --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:${DB_PORT:-5432}/${KC_DB_NAME}
+      KC_DB_USERNAME: ${KC_DB_USER}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+
+      KC_HOSTNAME_STRICT: ${KC_HOSTNAME_STRICT:-false}
+      KC_HOSTNAME_STRICT_HTTPS: ${KC_HOSTNAME_STRICT_HTTPS:-false}
+      KC_HTTP_ENABLED: ${KC_HTTP_ENABLED:-true}
+      KC_PROXY_HEADERS: xforwarded
+
+      PLATFORM_BACKEND_CLIENT_ID: ${PLATFORM_BACKEND_CLIENT_ID}
+    ports:
+      - '5443:8080'
+    depends_on:
+      - postgres
+    networks:
+      - backend-network
+      - frontend-network
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+
+    restart: no
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+networks:
+  frontend-network:
+    name: frontend-network
+    driver: bridge
+  backend-network:
+    name: backend-network
+    driver: bridge
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
+  postgres_data:
+    driver: local
