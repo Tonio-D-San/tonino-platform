@@ -5,16 +5,16 @@ import it.asansonne.common.jpa.util.SpecificationUtils;
 import it.asansonne.common.people.dto.request.FilterUser;
 import it.asansonne.rest.jpa.peopleservice.model.UserModel;
 import it.asansonne.rest.jpa.peopleservice.util.UserSpecificationUtils;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 /**
  * The type Business user specifications.
  */
 @Slf4j
-@AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public final class UserSpecifications implements ModelSpecifications<UserModel, FilterUser> {
+@Component
+public class UserSpecifications implements ModelSpecifications<UserModel, FilterUser> {
 
   /**
    * With filter specification.

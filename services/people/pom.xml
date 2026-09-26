@@ -28,6 +28,8 @@
     </scm>
     <properties>
         <java.version>25</java.version>
+        <application.name>people-service</application.name>
+        <project.version>0.0.1</project.version>
     </properties>
     <dependencies>
         <dependency>

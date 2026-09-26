@@ -3,9 +3,11 @@ package it.asansonne.common.keycloak.component.impl;
 import it.asansonne.common.keycloak.component.KcComponent;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
+import it.asansonne.common.keycloak.dto.output.KcGroup;
 import it.asansonne.common.keycloak.dto.output.KcUser;
 import it.asansonne.common.keycloak.exception.KeycloakCallException;
 import it.asansonne.common.keycloak.service.KcService;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,5 +63,10 @@ public class KcComponentImpl implements KcComponent {
   @Override
   public Page<KcUser> findAll(Pageable pageable) {
     return service.findAll(pageable);
+  }
+
+  @Override
+  public List<KcGroup> findAllGroups() {
+    return service.findAllGroups();
   }
 }

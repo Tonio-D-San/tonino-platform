@@ -6,6 +6,7 @@ import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.common.people.dto.request.UpdateGroup;
 import it.asansonne.common.people.dto.response.Group;
 import java.security.Principal;
+import java.util.List;
 
 /**
  * The interface Business user component.
@@ -38,4 +39,6 @@ public interface GroupComponent extends CrudComponent<CreateGroup, UpdateGroup, 
    * @return the group
    */
   Group findByDescription(Principal principal, String description);
+
+  List<Group> syncFromKeycloak();
 }

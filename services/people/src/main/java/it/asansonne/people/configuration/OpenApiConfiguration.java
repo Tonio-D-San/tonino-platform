@@ -1,7 +1,5 @@
 package it.asansonne.people.configuration;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -12,6 +10,7 @@ import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import java.util.Collections;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,12 +23,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
  * The type Open api configuration.
  */
 @Configuration
-@OpenAPIDefinition(servers = {@Server(url = "http://localhost:8082", description = "AuthHub API")})
 public class OpenApiConfiguration {
   private static final String SEC_SCHEME_OAUTH2 = "oauth2";
   @Value("${info.app.name}")
   private String appName;
-  @Value("${keycloak.host}")
+  @Value("${application.host}")
+  private String applicationHost;
+  @Value("${keycloak.host.base-url:${keycloak.host}}")
   private String authServer;
   @Value("${keycloak.realm.name}")
   private String realm;
@@ -47,20 +47,23 @@ public class OpenApiConfiguration {
                                @Value("${info.app.version}") String appVersion) {
     var authUrl = getAuthUrl();
     return new OpenAPI()
+        .servers(Collections.singletonList(new Server()
+            .url(applicationHost)
+            .description("People Service API")))
         .info(new Info()
             .version(appVersion)
             .title("Welcome in " + appName)
             .description(appDescription +
                 """
                   <div style="font-size: 15px; line-height: 1.5;">
-                    <b>Tonino-platform</b> è il servizio centralizzato per gestire autenticazioni via Google e altri provider social.<br>
+                    <b>%s</b> è il servizio centralizzato per gestire autenticazioni tramite Keycloak e altri provider.<br>
                     <ul>
                       <li>Login semplificato (OAuth2 Social)</li>
                       <li>Gestione utenti interna</li>
                       <li>API documentate e pronte all’integrazione</li>
                     </ul>
                   </div>
-                """
+                """.formatted(appDescription)
             )
             .version("v" + appVersion)
             .contact(new Contact()

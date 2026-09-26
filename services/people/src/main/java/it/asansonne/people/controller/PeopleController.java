@@ -8,7 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import it.asansonne.common.core.exception.ExceptionMessage;
+import it.asansonne.common.people.dto.request.CreateUser;
+import it.asansonne.common.people.dto.request.FilterUser;
+import it.asansonne.common.people.dto.request.UpdateUser;
 import it.asansonne.common.people.dto.response.User;
+import it.asansonne.common.rest.controller.CrudController;
 import java.security.Principal;
 import java.util.UUID;
 import org.springframework.http.MediaType;
@@ -17,7 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @PreAuthorize("isAuthenticated()")
-public interface PeopleController {
+public interface PeopleController extends CrudController<CreateUser, UpdateUser, FilterUser, User> {
   @Operation(summary = "Person find by uuid")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Person has been found by uuid",
@@ -70,7 +74,7 @@ public interface PeopleController {
               },
               schema = @Schema(implementation = ExceptionMessage.class)))})
   @GetMapping(value = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-  User findPersonByUuid(Principal principal,
+  User findByUuid(Principal principal,
                         @Parameter(name = "uuid", description = "The person uuid",
                             example = "08fba211-60ca-45fc-b809-86bc2ad81dca") @PathVariable
                         UUID uuid

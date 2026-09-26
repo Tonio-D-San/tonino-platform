@@ -4,17 +4,17 @@ import it.asansonne.common.jpa.repository.specification.ModelSpecifications;
 import it.asansonne.common.jpa.util.SpecificationUtils;
 import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.rest.jpa.peopleservice.model.GroupModel;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 /**
  * The type Business user specifications.
  */
 @Slf4j
-@AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@Component
 @SuppressWarnings("unused")
-public final class GroupSpecifications implements ModelSpecifications<GroupModel, FilterGroup> {
+public class GroupSpecifications implements ModelSpecifications<GroupModel, FilterGroup> {
 
   /**
    * With filter specification.

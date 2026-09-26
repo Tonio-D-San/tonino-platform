@@ -97,19 +97,21 @@ public class UserComponentImpl implements UserComponent {
         .passwordTemp(request.pswTemp())
         .groupUuid(group.getUuid())
         .build());
+    UUID userUuid = kcUser.id();
+    String userEmail = kcUser.email();
     try {
       return mapper.toDto(service.create(principal, UserModel.builder()
           .name(kcUser.firstName())
           .surname(kcUser.lastName())
-          .email(kcUser.email())
+          .email(userEmail)
           .phoneNumber(request.phoneNumber())
           .group(group)
-          .uuid(kcUser.id())
+          .uuid(userUuid)
           .build()));
     } catch (DataIntegrityViolationException e) {
-      kcComponent.deleteKcUser(kcUser.id());
-      log.error("Errore durante la creazione dell'utente {}", kcUser.email(), e);
-      throw new DataIntegrityException(BAD_REQUEST.getCode(), kcUser.email());
+      kcComponent.deleteKcUser(userUuid);
+      log.error("Errore durante la creazione dell'utente {}", userEmail, e);
+      throw new DataIntegrityException(BAD_REQUEST.getCode(), userEmail);
     }
   }
 

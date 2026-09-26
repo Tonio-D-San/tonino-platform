@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @SuppressWarnings("unused")
@@ -26,6 +27,9 @@ public interface GetController<F extends Filter, S extends Dto> {
    * The constant UPDATED_AT.
    */
   String UPDATED_AT = "updatedAt";
+  String DEFAULT_PAGE = "0";
+  String DEFAULT_SIZE = "20";
+  String DEFAULT_DIRECTION = "ASC";
 
   @Operation(summary = "resource.find.by.uuid")
   @ApiResponses(value = {
@@ -153,10 +157,13 @@ public interface GetController<F extends Filter, S extends Dto> {
   @ResponseStatus(HttpStatus.OK)
   Page<S> findByIsActive(
       Principal principal,
-      @Parameter(name = "isActive.name", description = "isActive.description", example = "true") Boolean isActive,
-      @Parameter(name = "page.name", description = "page.description") Integer page,
-      @Parameter(name = "size.name", description = "size.description") Integer size,
-      @Parameter(name = "direction.name", description = "direction.description") String direction
+      @Parameter(name = "isActive", description = "isActive.description", example = "true") Boolean isActive,
+      @Parameter(name = "page", description = "page.description", example = DEFAULT_PAGE)
+      @RequestParam(defaultValue = DEFAULT_PAGE) Integer page,
+      @Parameter(name = "size", description = "size.description", example = DEFAULT_SIZE)
+      @RequestParam(defaultValue = DEFAULT_SIZE) Integer size,
+      @Parameter(name = "direction", description = "direction.description", example = DEFAULT_DIRECTION)
+      @RequestParam(defaultValue = DEFAULT_DIRECTION) String direction
   );
 
   @Operation(summary = "resource.find.all")
@@ -219,9 +226,12 @@ public interface GetController<F extends Filter, S extends Dto> {
   Page<S> findAll(
       Principal principal,
       F filter,
-      @Parameter(name = "page.name", description = "page.description") Integer page,
-      @Parameter(name = "size.name", description = "size.description") Integer size,
-      @Parameter(name = "direction.name", description = "direction.description") String direction
+      @Parameter(name = "page", description = "page.description", example = DEFAULT_PAGE)
+      @RequestParam(defaultValue = DEFAULT_PAGE) Integer page,
+      @Parameter(name = "size", description = "size.description", example = DEFAULT_SIZE)
+      @RequestParam(defaultValue = DEFAULT_SIZE) Integer size,
+      @Parameter(name = "direction", description = "direction.description", example = DEFAULT_DIRECTION)
+      @RequestParam(defaultValue = DEFAULT_DIRECTION) String direction
   );
 
 }

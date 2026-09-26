@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,7 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class LoggingMdcFilter extends OncePerRequestFilter {
 
   private static final String CORRELATION_ID_HEADER = "x-correlation-id";
-  private static final String SERVICE_NAME = "admin-service";
+  @Value("${info.app.name}")
+  private String serviceName;
 
   @Override
   protected void doFilterInternal(
@@ -32,7 +34,7 @@ public class LoggingMdcFilter extends OncePerRequestFilter {
         .orElse(UUID.randomUUID().toString());
 
     try {
-      MDC.put("serviceName", SERVICE_NAME);
+      MDC.put("serviceName", serviceName);
       MDC.put("correlationId", correlationId);
       MDC.put("requestPath", request.getRequestURI());
 

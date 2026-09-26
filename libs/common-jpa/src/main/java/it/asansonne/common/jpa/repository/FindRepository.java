@@ -19,5 +19,4 @@ public interface FindRepository<M extends BaseModel> extends
   Optional<M> findByUuid(UUID uuid);
 
   Page<M> findByIsActive(Boolean isActive, Pageable pageable);
-
 }

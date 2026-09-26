@@ -3,8 +3,6 @@ package it.asansonne.rest.jpa.peopleservice.model;
 import it.asansonne.common.jpa.model.BaseModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -28,7 +26,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GroupModel extends BaseModel {
   @Column(nullable = false, unique = true)
-  @Enumerated(EnumType.STRING)
   private String role;
 
   @Column(nullable = false)

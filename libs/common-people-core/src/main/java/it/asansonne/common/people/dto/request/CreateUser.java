@@ -36,9 +36,6 @@ public record CreateUser(
     String phoneNumber,
 
     @NotNull
-    UUID organizationUuid,
-
-    @NotNull
     String role
 ) implements Create {
 }

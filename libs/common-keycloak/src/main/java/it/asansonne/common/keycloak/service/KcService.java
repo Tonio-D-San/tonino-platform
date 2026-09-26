@@ -2,7 +2,9 @@ package it.asansonne.common.keycloak.service;
 
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
+import it.asansonne.common.keycloak.dto.output.KcGroup;
 import it.asansonne.common.keycloak.dto.output.KcUser;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,8 @@ public interface KcService {
    * @return the page
    */
   Page<KcUser> findAll(Pageable pageable);
+
+  List<KcGroup> findAllGroups();
 
   /**
    * Create user create business user.

@@ -8,14 +8,17 @@ import static it.asansonne.common.keycloak.utils.RestCall.buildPayload;
 import it.asansonne.common.core.exception.custom.NotFoundException;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
+import it.asansonne.common.keycloak.dto.output.KcGroup;
 import it.asansonne.common.keycloak.dto.output.KcUser;
 import it.asansonne.common.keycloak.exception.KeycloakCallException;
 import it.asansonne.common.keycloak.service.KcService;
+import it.asansonne.common.keycloak.utils.AdminRestHeadersProvider;
 import it.asansonne.common.keycloak.utils.JwtRestHeadersProvider;
 import it.asansonne.common.rest.exception.handler.RestErrorHandler;
 import it.asansonne.common.rest.executor.RestClientExecutor;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +43,11 @@ public class KcServiceImpl implements KcService {
 
   @Value("${keycloak.host.user}")
   private String urlUser;
+  @Value("${keycloak.host.admin}")
+  private String urlAdmin;
   public static final String KEYCLOAK = "KEYCLOAK";
   private final JwtRestHeadersProvider headersProvider;
+  private final AdminRestHeadersProvider adminHeadersProvider;
   private final RestErrorHandler errorHandler;
   private final RestClientExecutor restClient;
 
@@ -103,6 +109,27 @@ public class KcServiceImpl implements KcService {
         pageable,
         countUsers()
     );
+  }
+
+  @Override
+  public List<KcGroup> findAllGroups() {
+    ResponseEntity<KcGroup[]> response = restClient.exchange(
+        KEYCLOAK,
+        UriComponentsBuilder.fromUriString(urlAdmin)
+            .pathSegment("groups")
+            .queryParam("briefRepresentation", false)
+            .toUriString(),
+        HttpMethod.GET,
+        new HttpEntity<>(adminHeadersProvider.build()),
+        KcGroup[].class, errorHandler
+    );
+    if (response.getStatusCode() == HttpStatus.NO_CONTENT || response.getBody() == null) {
+      log.info("Nessun gruppo trovato su Keycloak");
+      return List.of();
+    }
+    List<KcGroup> groups = Arrays.asList(response.getBody());
+    log.info("Trovati {} gruppi su Keycloak", groups.size());
+    return groups;
   }
 
   @Override

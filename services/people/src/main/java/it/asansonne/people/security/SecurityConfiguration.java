@@ -1,8 +1,5 @@
 package it.asansonne.people.security;
 
-import static it.asansonne.people.shared.SharedConstant.API;
-import static it.asansonne.people.shared.SharedConstant.MS_API_VERSION;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.asansonne.common.core.handler.AuthorizationAuthenticationHandler;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +8,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +42,8 @@ public class SecurityConfiguration {
   private final AuthorizationAuthenticationHandler handler;
   private final ManageToken manageToken;
 
+  @Value("${api.base-path}")
+  String apiBasePath;
   @Value("${keycloak.host.realm:err-error}")
   String localhostIssuer;
   @Value("${application.issuer.ngrok:ngrok-error}")
@@ -52,7 +52,7 @@ public class SecurityConfiguration {
   @Bean
   protected SecurityFilterChain filterChain(
       HttpSecurity http, KeycloakAuthenticationConverter authenticationConverter
-  ) throws Exception {
+  ) {
     log.info("Configuring security filter chain");
     return http
         .addFilterBefore(manageToken, UsernamePasswordAuthenticationFilter.class)
@@ -64,18 +64,16 @@ public class SecurityConfiguration {
             )
         ).authorizeHttpRequests(requests -> requests
             .requestMatchers(
-                "/people/swagger-ui",
-                "/people/swagger-ui/**",
-                "/people/openapi-docs",
-                "/people/openapi-docs/**",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
+                "/openapi-docs",
+                "/openapi-docs/**",
                 "/v3/api-docs/**",
                 "/actuator/health",
                 "/actuator/info",
                 "/error"
             ).permitAll()
-            .requestMatchers(String.format("/%s/%s/**", API, MS_API_VERSION)).authenticated()
+            .requestMatchers(apiBasePath + "/**").authenticated()
             .anyRequest().permitAll()
         ).sessionManagement(session ->
             {
@@ -97,14 +95,14 @@ public class SecurityConfiguration {
     @Override
     public JwtAuthenticationToken convert(@NonNull Jwt jwt) {
       return new JwtAuthenticationToken(
-          jwt, authoritiesConverter.convert(jwt), jwt.getSubject()
+          jwt, Objects.requireNonNull(authoritiesConverter.convert(jwt)), Objects.requireNonNull(jwt.getSubject())
       );
     }
 
     @Component
     static class KeycloakAuthoritiesConverter
         implements Converter<Jwt, List<SimpleGrantedAuthority>> {
-      @Value("${keycloak.client-id}")
+      @Value("${keycloak.client.id:${keycloak.client-id}}")
       private String clientId;
 
       @Override
