@@ -65,7 +65,7 @@ public class GroupComponentImpl implements GroupComponent {
 
   @Override
   public Page<Group> findAll(Principal principal, FilterGroup filter, Pageable pageable) {
-    return null;
+    return mapper.toDto(service.findAll(principal, filter, pageable));
   }
 
   @Override

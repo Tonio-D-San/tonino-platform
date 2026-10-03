@@ -45,7 +45,15 @@ public class GroupControllerImpl implements GroupController {
   @Override
   public Page<Group> findAll(Principal principal, FilterGroup filter, Integer page, Integer size,
                              String direction) {
-    return null;
+    return component.findAll(principal, filter, PageRequest.of(
+        page == null ? 0 : page,
+        size == null ? 20 : size,
+        Sort.by(
+            Sort.Direction.fromString(
+                direction == null || direction.isBlank() ? "ASC" : direction
+            ), UPDATED_AT
+        )
+    ));
   }
 
   @Override
