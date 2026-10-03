@@ -55,7 +55,7 @@ public class GroupComponentImpl implements GroupComponent {
 
   @Override
   public Group findByUuid(Principal principal, UUID uuid) {
-    return null;
+    return mapper.toDto(service.findByUuid(principal, uuid));
   }
 
   @Override
