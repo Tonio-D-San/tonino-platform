@@ -20,61 +20,61 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @PreAuthorize("isAuthenticated()")
-@Tag(name = "Utenti")
-@ApiResponse(responseCode = "401", description = "Autenticazione richiesta", content = @Content)
-@ApiResponse(responseCode = "403", description = "Accesso non consentito", content = @Content)
+@Tag(name = "users", description = "user.tag.description")
+@ApiResponse(responseCode = "401", description = "common.response.401.description", content = @Content)
+@ApiResponse(responseCode = "403", description = "common.response.403.description", content = @Content)
 public interface PeopleController extends CrudController<CreateUser, UpdateUser, FilterUser, User> {
 
   @Override
-  @Operation(operationId = "peopleFindByUuid", summary = "Cerca un utente tramite UUID")
-  @ApiResponse(responseCode = "200", description = "Utente trovato", useReturnTypeSchema = true)
-  @ApiResponse(responseCode = "404", description = "Utente non trovato",
+  @Operation(operationId = "peopleFindByUuid", summary = "user.find.by.uuid.summary")
+  @ApiResponse(responseCode = "200", description = "user.find.by.uuid.response.200.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "404", description = "user.find.by.uuid.response.404.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
   User findByUuid(@Parameter(hidden = true) Principal principal,
-      @Parameter(description = "UUID dell'utente",
+      @Parameter(description = "user.uuid.description",
           example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid);
 
   @Override
-  @Operation(operationId = "peopleFindByIsActive", summary = "Elenca gli utenti per stato di attivazione")
-  @ApiResponse(responseCode = "200", description = "Pagina dgli utenti", useReturnTypeSchema = true)
+  @Operation(operationId = "peopleFindByIsActive", summary = "user.find.by.is.active.summary")
+  @ApiResponse(responseCode = "200", description = "user.find.by.is.active.response.200.description", useReturnTypeSchema = true)
   Page<User> findByIsActive(
       @Parameter(hidden = true) Principal principal,
-      @Parameter(description = "Stato di attivazione da cercare", example = "true") Boolean isActive,
-      @Parameter(description = "Indice della pagina, a partire da zero", example = DEFAULT_PAGE) Integer page,
-      @Parameter(description = "Numero di elementi per pagina", example = DEFAULT_SIZE) Integer size,
-      @Parameter(description = "Ordinamento per updatedAt: ASC o DESC", example = DEFAULT_DIRECTION) String direction);
+      @Parameter(description = "common.is.active.description", example = "true") Boolean isActive,
+      @Parameter(description = "common.page.description", example = DEFAULT_PAGE) Integer page,
+      @Parameter(description = "common.size.description", example = DEFAULT_SIZE) Integer size,
+      @Parameter(description = "common.sort.direction.description", example = DEFAULT_DIRECTION) String direction);
 
   @Override
-  @Operation(operationId = "peopleFindAll", summary = "Cerca gli utenti con filtri (implementazione non completata)")
-  @ApiResponse(responseCode = "200", description = "Pagina dgli utenti", useReturnTypeSchema = true)
+  @Operation(operationId = "peopleFindAll", summary = "user.find.all.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "200", description = "user.find.all.response.200.description", useReturnTypeSchema = true)
   Page<User> findAll(
       @Parameter(hidden = true) Principal principal, @ParameterObject FilterUser filter,
-      @Parameter(description = "Indice della pagina, a partire da zero", example = DEFAULT_PAGE) Integer page,
-      @Parameter(description = "Numero di elementi per pagina", example = DEFAULT_SIZE) Integer size,
-      @Parameter(description = "Ordinamento per updatedAt: ASC o DESC", example = DEFAULT_DIRECTION) String direction);
+      @Parameter(description = "common.page.description", example = DEFAULT_PAGE) Integer page,
+      @Parameter(description = "common.size.description", example = DEFAULT_SIZE) Integer size,
+      @Parameter(description = "common.sort.direction.description", example = DEFAULT_DIRECTION) String direction);
 
   @Override
-  @Operation(operationId = "peopleCreate", summary = "Crea un utente")
-  @ApiResponse(responseCode = "201", description = "Utente creato", useReturnTypeSchema = true)
-  @ApiResponse(responseCode = "400", description = "Dati della richiesta non validi",
+  @Operation(operationId = "peopleCreate", summary = "user.create.summary")
+  @ApiResponse(responseCode = "201", description = "user.create.response.201.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "400", description = "common.response.400.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
-  @ApiResponse(responseCode = "409", description = "Utente duplicato o conflitto con i vincoli dei dati",
+  @ApiResponse(responseCode = "409", description = "user.create.response.409.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
   User create(@Parameter(hidden = true) Principal principal, CreateUser request);
 
   @Override
-  @Operation(operationId = "peopleUpdateByUuid", summary = "Aggiorna un utente (implementazione non completata)")
-  @ApiResponse(responseCode = "200", description = "Operazione completata", content = @Content)
-  void updateByUuid(@Parameter(description = "UUID dell'utente",
+  @Operation(operationId = "peopleUpdateByUuid", summary = "user.update.by.uuid.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "200", description = "user.update.by.uuid.response.200.description", content = @Content)
+  void updateByUuid(@Parameter(description = "user.uuid.description",
           example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid, UpdateUser request);
 
   @Override
-  @Operation(operationId = "peopleDeleteByUuid", summary = "Elimina un utente (implementazione non completata)")
-  @ApiResponse(responseCode = "204", description = "Operazione completata senza contenuto", content = @Content)
+  @Operation(operationId = "peopleDeleteByUuid", summary = "user.delete.by.uuid.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "204", description = "user.delete.by.uuid.response.204.description", content = @Content)
   void deleteByUuid(@Parameter(hidden = true) Principal principal,
-      @Parameter(description = "UUID dell'utente",
+      @Parameter(description = "user.uuid.description",
           example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid);
 }

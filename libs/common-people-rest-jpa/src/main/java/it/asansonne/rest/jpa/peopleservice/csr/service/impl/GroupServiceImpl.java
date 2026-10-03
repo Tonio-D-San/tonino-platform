@@ -2,6 +2,7 @@ package it.asansonne.rest.jpa.peopleservice.csr.service.impl;
 
 import static it.asansonne.rest.jpa.peopleservice.csr.repository.specification.GroupSpecifications.descriptionLike;
 import static it.asansonne.rest.jpa.peopleservice.csr.repository.specification.GroupSpecifications.pathLike;
+import static it.asansonne.rest.jpa.peopleservice.csr.repository.specification.GroupSpecifications.roleLike;
 import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.GROUP_NOT_FOUND;
 
 import it.asansonne.common.core.exception.custom.NotFoundException;
@@ -28,7 +29,7 @@ public class GroupServiceImpl implements GroupService {
 
   @Override
   public GroupModel findByRole(Principal principal, String role) {
-    return repository.findByRole(role)
+    return repository.findByRole(roleLike(role).toString())
         .orElseThrow(() -> new NotFoundException(GROUP_NOT_FOUND.getCode()));
   }
 

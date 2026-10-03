@@ -1,7 +1,6 @@
 package it.asansonne.common.people.dto.request;
 
 import it.asansonne.common.core.dto.Filter;
-import java.util.UUID;
 import lombok.Builder;
 
 /**
@@ -9,10 +8,10 @@ import lombok.Builder;
  */
 @Builder
 public record FilterGroup(
-    UUID uuid,
+    String uuid,
     Boolean isActive,
     String role,
-    String path, //TODO: cercare per role e non per path
+    String path,
     String description
 ) implements Filter {
 }

@@ -20,61 +20,61 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @PreAuthorize("isAuthenticated()")
-@Tag(name = "Gruppi")
-@ApiResponse(responseCode = "401", description = "Autenticazione richiesta", content = @Content)
-@ApiResponse(responseCode = "403", description = "Accesso non consentito", content = @Content)
+@Tag(name = "groups", description = "group.tag.description")
+@ApiResponse(responseCode = "401", description = "common.response.401.description", content = @Content)
+@ApiResponse(responseCode = "403", description = "common.response.403.description", content = @Content)
 public interface GroupController extends CrudController<CreateGroup, UpdateGroup, FilterGroup, Group> {
 
   @Override
-  @Operation(operationId = "groupFindByUuid", summary = "Cerca un gruppo tramite UUID (implementazione non completata)")
-  @ApiResponse(responseCode = "200", description = "Gruppo trovato", useReturnTypeSchema = true)
-  @ApiResponse(responseCode = "404", description = "Gruppo non trovato",
+  @Operation(operationId = "groupFindByUuid", summary = "group.find.by.uuid.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "200", description = "group.find.by.uuid.response.200.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "404", description = "group.find.by.uuid.response.404.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
   Group findByUuid(@Parameter(hidden = true) Principal principal,
-      @Parameter(description = "UUID del gruppo",
+      @Parameter(description = "group.uuid.description",
           example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid);
 
   @Override
-  @Operation(operationId = "groupFindByIsActive", summary = "Elenca i gruppi per stato di attivazione (implementazione non completata)")
-  @ApiResponse(responseCode = "200", description = "Pagina di gruppi", useReturnTypeSchema = true)
+  @Operation(operationId = "groupFindByIsActive", summary = "group.find.by.is.active.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "200", description = "group.find.by.is.active.response.200.description", useReturnTypeSchema = true)
   Page<Group> findByIsActive(
       @Parameter(hidden = true) Principal principal,
-      @Parameter(description = "Stato di attivazione da cercare", example = "true") Boolean isActive,
-      @Parameter(description = "Indice della pagina, a partire da zero", example = DEFAULT_PAGE) Integer page,
-      @Parameter(description = "Numero di elementi per pagina", example = DEFAULT_SIZE) Integer size,
-      @Parameter(description = "Ordinamento per updatedAt: ASC o DESC", example = DEFAULT_DIRECTION) String direction);
+      @Parameter(description = "common.is.active.description", example = "true") Boolean isActive,
+      @Parameter(description = "common.page.description", example = DEFAULT_PAGE) Integer page,
+      @Parameter(description = "common.size.description", example = DEFAULT_SIZE) Integer size,
+      @Parameter(description = "common.sort.direction.description", example = DEFAULT_DIRECTION) String direction);
 
   @Override
-  @Operation(operationId = "groupFindAll", summary = "Cerca i gruppi con filtri (implementazione non completata)")
-  @ApiResponse(responseCode = "200", description = "Pagina di gruppi", useReturnTypeSchema = true)
+  @Operation(operationId = "groupFindAll", summary = "group.find.all.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "200", description = "group.find.all.response.200.description", useReturnTypeSchema = true)
   Page<Group> findAll(
       @Parameter(hidden = true) Principal principal, @ParameterObject FilterGroup filter,
-      @Parameter(description = "Indice della pagina, a partire da zero", example = DEFAULT_PAGE) Integer page,
-      @Parameter(description = "Numero di elementi per pagina", example = DEFAULT_SIZE) Integer size,
-      @Parameter(description = "Ordinamento per updatedAt: ASC o DESC", example = DEFAULT_DIRECTION) String direction);
+      @Parameter(description = "common.page.description", example = DEFAULT_PAGE) Integer page,
+      @Parameter(description = "common.size.description", example = DEFAULT_SIZE) Integer size,
+      @Parameter(description = "common.sort.direction.description", example = DEFAULT_DIRECTION) String direction);
 
   @Override
-  @Operation(operationId = "groupCreate", summary = "Crea un gruppo")
-  @ApiResponse(responseCode = "201", description = "Gruppo creato", useReturnTypeSchema = true)
-  @ApiResponse(responseCode = "400", description = "Dati della richiesta non validi",
+  @Operation(operationId = "groupCreate", summary = "group.create.summary")
+  @ApiResponse(responseCode = "201", description = "group.create.response.201.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "400", description = "common.response.400.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
-  @ApiResponse(responseCode = "409", description = "Gruppo duplicato o conflitto con i vincoli dei dati",
+  @ApiResponse(responseCode = "409", description = "group.create.response.409.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
   Group create(@Parameter(hidden = true) Principal principal, CreateGroup request);
 
   @Override
-  @Operation(operationId = "groupUpdateByUuid", summary = "Aggiorna un gruppo (implementazione non completata)")
-  @ApiResponse(responseCode = "200", description = "Operazione completata", content = @Content)
-  void updateByUuid(@Parameter(description = "UUID del gruppo",
+  @Operation(operationId = "groupUpdateByUuid", summary = "group.update.by.uuid.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "200", description = "group.update.by.uuid.response.200.description", content = @Content)
+  void updateByUuid(@Parameter(description = "group.uuid.description",
           example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid, UpdateGroup request);
 
   @Override
-  @Operation(operationId = "groupDeleteByUuid", summary = "Elimina un gruppo (implementazione non completata)")
-  @ApiResponse(responseCode = "204", description = "Operazione completata senza contenuto", content = @Content)
+  @Operation(operationId = "groupDeleteByUuid", summary = "group.delete.by.uuid.summary", description = "common.operation.not.implemented.description")
+  @ApiResponse(responseCode = "204", description = "group.delete.by.uuid.response.204.description", content = @Content)
   void deleteByUuid(@Parameter(hidden = true) Principal principal,
-      @Parameter(description = "UUID del gruppo",
+      @Parameter(description = "group.uuid.description",
           example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid);
 }

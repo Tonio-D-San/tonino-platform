@@ -13,12 +13,9 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
-import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * The type Open api configuration.
@@ -39,34 +36,21 @@ public class OpenApiConfiguration {
   /**
    * Custom open api.
    *
-   * @param appDescription the app description
    * @param appVersion     the app version
    * @return the open api
    */
 
   @Bean
-  public OpenAPI customOpenApi(@Value("${info.app.description}") String appDescription,
-                               @Value("${info.app.version}") String appVersion) {
+  public OpenAPI customOpenApi(@Value("${info.app.version}") String appVersion) {
     var authUrl = getAuthUrl();
     return new OpenAPI()
         .servers(Collections.singletonList(new Server()
             .url(applicationHost)
-            .description("People Service API")))
+            .description("people.api.server.description")))
         .info(new Info()
             .version(appVersion)
-            .title("Welcome in " + appName)
-            .description(appDescription +
-                """
-                      <div style="font-size: 15px; line-height: 1.5;">
-                        <b>%s</b> è il servizio centralizzato per gestire autenticazioni tramite Keycloak e altri provider.<br>
-                        <ul>
-                          <li>Login semplificato (OAuth2 Social)</li>
-                          <li>Gestione utenti interna</li>
-                          <li>API documentate e pronte all’integrazione</li>
-                        </ul>
-                      </div>
-                    """.formatted(appDescription)
-            )
+            .title(appName)
+            .description("people.api.description")
             .version("v" + appVersion)
             .contact(new Contact()
                 .name("Tonino platform Dev Team")
@@ -79,7 +63,7 @@ public class OpenApiConfiguration {
             SEC_SCHEME_OAUTH2,
             new SecurityScheme()
                 .type(SecurityScheme.Type.OAUTH2)
-                .description("Oauth2 flow")
+                .description("common.security.oauth2.description")
                 .flows(new OAuthFlows().authorizationCode(new OAuthFlow()
                     .authorizationUrl(authUrl + "/auth")
                     .tokenUrl(authUrl + "/token"))
@@ -87,26 +71,9 @@ public class OpenApiConfiguration {
         )).security(Collections.singletonList(
             new SecurityRequirement().addList(SEC_SCHEME_OAUTH2)
         )).externalDocs(new ExternalDocumentation()
-            .description("Documentazione estesa e guide di integrazione")
+            .description("people.api.external.docs.description")
             .url("https://github.com/asansonne/tonino-platform/wiki")
         );
-  }
-
-  @Bean
-  public OpenApiCustomizer i18nOpenApiCustomizer(MessageSource messageSource) {
-    return openApi -> openApi.getPaths().forEach((_, item) ->
-        item.readOperations().forEach(operation -> {
-          if (operation.getDescription() != null) {
-            operation.setDescription(
-                messageSource.getMessage(
-                    operation.getDescription(),
-                    null,
-                    LocaleContextHolder.getLocale()
-                )
-            );
-          }
-        })
-    );
   }
 
   private String getAuthUrl() {
