@@ -49,8 +49,8 @@ public class GroupControllerImpl implements GroupController {
   }
 
   @Override
-  public void deleteByUuid(Principal principal, UUID uuid) {
-
+  public Group create(Principal principal, CreateGroup request) {
+    return component.create(principal, request);
   }
 
   @Override
@@ -59,7 +59,8 @@ public class GroupControllerImpl implements GroupController {
   }
 
   @Override
-  public Group create(Principal principal, CreateGroup request) {
-    return component.create(principal, request);
+  public void deleteByUuid(Principal principal, UUID uuid) {
+
   }
+
 }

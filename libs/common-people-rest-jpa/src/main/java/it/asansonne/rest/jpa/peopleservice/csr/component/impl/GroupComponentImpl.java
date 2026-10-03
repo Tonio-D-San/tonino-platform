@@ -60,7 +60,7 @@ public class GroupComponentImpl implements GroupComponent {
 
   @Override
   public Page<Group> findByIsActive(Principal principal, Pageable pageable, Boolean isActive) {
-    return null;
+    return mapper.toDto(service.findByIsActive(principal, isActive, pageable));
   }
 
   @Override
