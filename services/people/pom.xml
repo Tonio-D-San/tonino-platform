@@ -10,7 +10,7 @@
     </parent>
     <groupId>it.asansonne</groupId>
     <artifactId>people</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>people</name>
     <description>people</description>
     <developers>
@@ -26,7 +26,7 @@
         <jackson-bom.version>3.2.3</jackson-bom.version>
         <tomcat.version>11.0.26</tomcat.version>
         <application.name>people-service</application.name>
-        <project.version>0.0.1</project.version>
+        <project.version>1.0.0</project.version>
         <logback.version>1.6.3</logback.version>
     </properties>
     <dependencies>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>it.asansonne</groupId>
             <artifactId>common-people-rest-jpa</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
     </dependencies>
