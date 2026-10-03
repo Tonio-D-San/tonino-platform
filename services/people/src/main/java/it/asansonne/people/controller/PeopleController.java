@@ -68,13 +68,15 @@ public interface PeopleController extends CrudController<CreateUser, UpdateUser,
   @Override
   @Operation(operationId = "peopleUpdateByUuid", summary = "user.update.by.uuid.summary", description = "common.operation.not.implemented.description")
   @ApiResponse(responseCode = "200", description = "user.update.by.uuid.response.200.description", content = @Content)
-  void updateByUuid(@Parameter(description = "user.uuid.description",
-          example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid, UpdateUser request);
+  void updateByUuid(
+      @Parameter(hidden = true) Principal principal,
+      @Parameter(description = "user.uuid.description", example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid,
+      UpdateUser request);
 
   @Override
   @Operation(operationId = "peopleDeleteByUuid", summary = "user.delete.by.uuid.summary", description = "common.operation.not.implemented.description")
   @ApiResponse(responseCode = "204", description = "user.delete.by.uuid.response.204.description", content = @Content)
-  void deleteByUuid(@Parameter(hidden = true) Principal principal,
-      @Parameter(description = "user.uuid.description",
-          example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid);
+  void deleteByUuid(
+      @Parameter(hidden = true) Principal principal,
+      @Parameter(description = "user.uuid.description", example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid);
 }

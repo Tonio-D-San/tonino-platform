@@ -1,10 +1,8 @@
 package it.asansonne.rest.jpa.peopleservice.mapper;
 
 import static it.asansonne.common.core.enums.ErrorMessage.MODEL_NOT_FOUND;
-import static it.asansonne.common.core.enums.ErrorMessage.NOT_IMPLEMENTED;
 
 import it.asansonne.common.core.exception.custom.NotFoundException;
-import it.asansonne.common.core.exception.custom.OperationNotAllowedException;
 import it.asansonne.common.people.dto.request.UpdateGroup;
 import it.asansonne.common.people.dto.response.Group;
 import it.asansonne.common.rest.mapper.ResponseMapper;
@@ -27,7 +25,7 @@ public class GroupMapper implements
 
   @Override
   public GroupModel updateToModel(UpdateGroup input) {
-    throw new OperationNotAllowedException(NOT_IMPLEMENTED.getCode());
+    return GroupModel.builder().description(input.description()).build();
   }
 
   @Override

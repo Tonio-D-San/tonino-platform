@@ -53,7 +53,7 @@ public class PeopleControllerImpl implements PeopleController {
   }
 
   @Override
-  public void updateByUuid(UUID uuid, UpdateUser request) {
+  public void updateByUuid(Principal principal, UUID uuid, UpdateUser request) {
 
   }
 

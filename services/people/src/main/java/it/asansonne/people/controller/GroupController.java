@@ -69,7 +69,7 @@ public interface GroupController extends CrudController<CreateGroup, UpdateGroup
   @Override
   @Operation(operationId = "groupUpdateByUuid", summary = "group.update.by.uuid.summary", description = "common.operation.not.implemented.description")
   @ApiResponse(responseCode = "200", description = "group.update.by.uuid.response.200.description", content = @Content)
-  void updateByUuid(@Parameter(description = "group.uuid.description",
+  void updateByUuid(@Parameter(hidden = true) Principal principal, @Parameter(description = "group.uuid.description",
           example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid, UpdateGroup request);
 
   @Override

@@ -77,7 +77,7 @@ public class GroupComponentImpl implements GroupComponent {
 
   @Override
   public Group updateByUuid(Principal principal, UUID uuid, UpdateGroup update) {
-    return null;
+    return mapper.toDto(service.update(principal, mapper.updateToModel(update)));
   }
 
   @Override
