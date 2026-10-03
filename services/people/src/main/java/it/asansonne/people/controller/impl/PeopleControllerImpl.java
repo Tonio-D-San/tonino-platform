@@ -22,6 +22,26 @@ public class PeopleControllerImpl implements PeopleController {
   private final UserComponent component;
 
   @Override
+  public User me(Principal principal) {
+    return component.me(principal);
+  }
+
+  @Override
+  public User findByName(Principal principal, String name) {
+    return component.findByName(principal, name);
+  }
+
+  @Override
+  public User findBySurname(Principal principal, String surname) {
+    return component.findBySurname(principal, surname);
+  }
+
+  @Override
+  public User findByEmail(Principal principal, String email) {
+    return component.findByEmail(principal, email);
+  }
+
+  @Override
   public User findByUuid(Principal principal, UUID uuid) {
     return component.findByUuid(principal, uuid);
   }
@@ -44,21 +64,30 @@ public class PeopleControllerImpl implements PeopleController {
   @Override
   public Page<User> findAll(Principal principal, FilterUser filter, Integer page, Integer size,
                             String direction) {
-    return null;
-  }
-
-  @Override
-  public void deleteByUuid(Principal principal, UUID uuid) {
-
-  }
-
-  @Override
-  public void updateByUuid(Principal principal, UUID uuid, UpdateUser request) {
-
+    return component.findAll(principal, filter, PageRequest.of(
+        page == null ? 0 : page,
+        size == null ? 20 : size,
+        Sort.by(
+            Sort.Direction.fromString(
+                direction == null || direction.isBlank() ? "ASC" : direction
+            ), UPDATED_AT
+        )
+    ));
   }
 
   @Override
   public User create(Principal principal, CreateUser request) {
     return component.create(principal, request);
   }
+
+  @Override
+  public void updateByUuid(Principal principal, UUID uuid, UpdateUser request) {
+    component.updateByUuid(principal, uuid, request);
+  }
+
+  @Override
+  public void deleteByUuid(Principal principal, UUID uuid) {
+    component.deleteByUuid(principal, uuid);
+  }
+
 }

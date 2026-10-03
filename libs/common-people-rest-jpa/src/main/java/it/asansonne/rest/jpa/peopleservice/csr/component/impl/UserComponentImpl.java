@@ -1,6 +1,7 @@
 package it.asansonne.rest.jpa.peopleservice.csr.component.impl;
 
 import static it.asansonne.common.core.enums.ErrorMessage.BAD_REQUEST;
+import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.KEYCLOAK_DELETE_USER_ERROR;
 
 import it.asansonne.common.core.exception.custom.DataIntegrityException;
 import it.asansonne.common.keycloak.component.KcComponent;
@@ -59,15 +60,6 @@ public class UserComponentImpl implements UserComponent {
   }
 
   @Override
-  public Boolean deleteByUuid(Principal principal, UUID uuid) {
-    UserModel model = this.findModelByUuid(principal, uuid);
-    if (Boolean.TRUE.equals(kcComponent.deleteKcUser(uuid))) {
-      return service.deleteByUuid(principal, model);
-    }
-    throw new KeycloakCallException("Eliminazione non riuscita"); //TODO: creare enum
-  }
-
-  @Override
   public User findByUuid(Principal principal, UUID uuid) {
     return mapper.toDto(this.findModelByUuid(principal, uuid));
   }
@@ -80,11 +72,6 @@ public class UserComponentImpl implements UserComponent {
   @Override
   public Page<User> findAll(Principal principal, FilterUser filter, Pageable pageable) {
     return mapper.toDto(service.findAll(principal, filter, pageable));
-  }
-
-  @Override
-  public User updateByUuid(Principal principal, UUID uuid, UpdateUser update) {
-    return null;
   }
 
   @Override
@@ -113,6 +100,19 @@ public class UserComponentImpl implements UserComponent {
       log.error("Errore durante la creazione dell'utente {}", userEmail, e);
       throw new DataIntegrityException(BAD_REQUEST.getCode(), userEmail);
     }
+  }
+
+  @Override
+  public User updateByUuid(Principal principal, UUID uuid, UpdateUser update) {
+    return mapper.toDto(service.update(principal, mapper.updateToModel(update)));
+  }
+
+  @Override
+  public Boolean deleteByUuid(Principal principal, UUID uuid) {
+    if (Boolean.TRUE.equals(kcComponent.deleteKcUser(uuid))) {
+      return service.deleteByUuid(principal, this.findModelByUuid(principal, uuid));
+    }
+    throw new KeycloakCallException(KEYCLOAK_DELETE_USER_ERROR.getCode());
   }
 
   private UserModel findModelByUuid(Principal principal, UUID uuid) {

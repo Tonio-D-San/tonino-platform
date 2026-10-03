@@ -15,7 +15,10 @@ public enum ErrorMessage {
 
   // Duplicate
   EMAIL_DUPLICATE("error.people.email.duplicate"),
-  FISCAL_CODE_DUPLICATE("error.people.fiscalcode.duplicate");
+  FISCAL_CODE_DUPLICATE("error.people.fiscalcode.duplicate"),
+
+  // Keycloak
+  KEYCLOAK_DELETE_USER_ERROR("error.people.keycloak.delete.user");
 
   private final String code;
 

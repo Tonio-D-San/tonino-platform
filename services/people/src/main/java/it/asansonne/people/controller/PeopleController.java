@@ -16,14 +16,60 @@ import java.security.Principal;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @PreAuthorize("isAuthenticated()")
 @Tag(name = "users", description = "user.tag.description")
 @ApiResponse(responseCode = "401", description = "common.response.401.description", content = @Content)
 @ApiResponse(responseCode = "403", description = "common.response.403.description", content = @Content)
 public interface PeopleController extends CrudController<CreateUser, UpdateUser, FilterUser, User> {
+
+  @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(operationId = "peopleMe", summary = "user.me.summary")
+  @ApiResponse(responseCode = "200", description = "user.me.response.200.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "404", description = "user.me.response.404.description",
+      content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = ExceptionMessage.class)))
+  User me(@Parameter(hidden = true) Principal principal);
+
+  @GetMapping(value = "/name/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(operationId = "peopleFindByName", summary = "user.find.by.name.summary")
+  @ApiResponse(responseCode = "200", description = "user.find.by.name.response.200.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "404", description = "user.find.by.name.response.404.description",
+      content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = ExceptionMessage.class)))
+  User findByName(
+      @Parameter(hidden = true) Principal principal,
+      @Parameter(description = "user.name.description", example = "Mario") @PathVariable String name);
+
+  @GetMapping(value = "/surname/{surname}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(operationId = "peopleFindBySurname", summary = "user.find.by.surname.summary")
+  @ApiResponse(responseCode = "200", description = "user.find.by.surname.response.200.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "404", description = "user.find.by.surname.response.404.description",
+      content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = ExceptionMessage.class)))
+  User findBySurname(
+      @Parameter(hidden = true) Principal principal,
+      @Parameter(description = "user.surname.description", example = "Rossi") @PathVariable String surname);
+
+  @GetMapping(value = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  @Operation(operationId = "peopleFindByEmail", summary = "user.find.by.email.summary")
+  @ApiResponse(responseCode = "200", description = "user.find.by.email.response.200.description", useReturnTypeSchema = true)
+  @ApiResponse(responseCode = "404", description = "user.find.by.email.response.404.description",
+      content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = ExceptionMessage.class)))
+  User findByEmail(
+      @Parameter(hidden = true) Principal principal,
+      @Parameter(description = "user.email.description", example = "mario.rossi@example.com") @PathVariable String email);
 
   @Override
   @Operation(operationId = "peopleFindByUuid", summary = "user.find.by.uuid.summary")
