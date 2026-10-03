@@ -1,5 +1,8 @@
 package it.asansonne.rest.jpa.peopleservice.csr.component.impl;
 
+import static it.asansonne.common.core.enums.ErrorMessage.BAD_REQUEST;
+
+import it.asansonne.common.core.exception.custom.DataIntegrityException;
 import it.asansonne.common.keycloak.component.KcComponent;
 import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.output.KcGroup;
@@ -17,6 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -85,14 +89,22 @@ public class GroupComponentImpl implements GroupComponent {
         .attributes(Map.of(KcGroup.DESCRIPTION, List.of(description)))
         .build()
     );
-    return mapper.toDto(service.create(principal, GroupModel.builder()
-        .role(kcGroup.name())
-        .path(kcGroup.path())
-        .description(kcGroup.getDescription())
-        .users(null)
-        .uuid(kcGroup.id())
-        .build())
-    );
+    UUID groupUuid = kcGroup.id();
+    String groupName = kcGroup.name();
+    try {
+      return mapper.toDto(service.create(principal, GroupModel.builder()
+          .role(groupName)
+          .path(kcGroup.path())
+          .description(kcGroup.getDescription())
+          .users(null)
+          .uuid(groupUuid)
+          .build())
+      );
+    } catch (DataIntegrityViolationException e) {
+      kcComponent.deleteKcGroup(groupUuid);
+      log.error("Errore durante la creazione del gruppo {}", groupName, e);
+      throw new DataIntegrityException(BAD_REQUEST.getCode(), groupName);
+    }
   }
   
 }
