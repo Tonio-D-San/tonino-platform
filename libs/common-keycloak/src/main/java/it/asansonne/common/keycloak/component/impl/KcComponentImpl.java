@@ -35,7 +35,7 @@ public class KcComponentImpl implements KcComponent {
 
   @Override
   public KcUser createKcUser(CreateKcUser user) {
-    KcUser kcUser = service.createKeycloakUser(user);
+    KcUser kcUser = service.createKcUser(user);
     try {
       service.addUserToGroup(kcUser.id(), user.groupUuid());
     } catch (KeycloakCallException ex) {
@@ -53,17 +53,21 @@ public class KcComponentImpl implements KcComponent {
 
   @Override
   public KcUser updateKcUser(UUID uuid, UpdateKcUser user) {
-    return service.updateKeycloakUser(uuid, user);
+    return service.updateKcUser(uuid, user);
   }
 
   @Override
   public Boolean deleteKcUser(UUID uuid) {
-    return service.deleteKeycloakUser(uuid);
+    return service.deleteKcUser(uuid);
+  }
+  @Override
+  public Boolean deleteKcGroup(UUID uuid) {
+    return service.deleteKcGroup(uuid);
   }
 
   @Override
   public Boolean disableKcUser(UUID uuid, Boolean isEnabled) {
-    return service.disableKeycloakUser(uuid, isEnabled);
+    return service.disableKcUser(uuid, isEnabled);
   }
 
   @Override

@@ -61,7 +61,7 @@ public interface KcService {
    * @param request the request
    * @return the string
    */
-  KcUser createKeycloakUser(CreateKcUser request);
+  KcUser createKcUser(CreateKcUser request);
 
   /**
    * Create kc group.
@@ -78,14 +78,22 @@ public interface KcService {
    * @param request the request
    * @return the update business user
    */
-  KcUser updateKeycloakUser(UUID uuid, UpdateKcUser request);
+  KcUser updateKcUser(UUID uuid, UpdateKcUser request);
 
   /**
    * Delete business user.
    *
    * @param uuid the uuid
    */
-  Boolean deleteKeycloakUser(UUID uuid);
+  Boolean deleteKcUser(UUID uuid);
+
+  /**
+   * Delete keycloak group boolean.
+   *
+   * @param uuid the uuid
+   * @return the boolean
+   */
+  Boolean deleteKcGroup(UUID uuid);
 
   /**
    * Delete business user.
@@ -94,7 +102,7 @@ public interface KcService {
    * @param isEnabled the is enabled
    * @return the boolean
    */
-  Boolean disableKeycloakUser(UUID uuid, Boolean isEnabled);
+  Boolean disableKcUser(UUID uuid, Boolean isEnabled);
 
   /**
    * Add user to the group.

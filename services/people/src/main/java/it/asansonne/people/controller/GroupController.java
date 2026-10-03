@@ -18,6 +18,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @PreAuthorize("isAuthenticated()")
 @Tag(name = "groups", description = "group.tag.description")
@@ -63,7 +64,7 @@ public interface GroupController extends CrudController<CreateGroup, UpdateGroup
   @ApiResponse(responseCode = "409", description = "group.create.response.409.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
-  Group create(@Parameter(hidden = true) Principal principal, CreateGroup request);
+  Group create(@Parameter(hidden = true) Principal principal, @RequestBody CreateGroup request);
 
   @Override
   @Operation(operationId = "groupUpdateByUuid", summary = "group.update.by.uuid.summary", description = "common.operation.not.implemented.description")

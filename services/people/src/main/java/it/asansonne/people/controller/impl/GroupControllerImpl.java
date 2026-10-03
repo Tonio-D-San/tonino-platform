@@ -68,7 +68,7 @@ public class GroupControllerImpl implements GroupController {
 
   @Override
   public void deleteByUuid(Principal principal, UUID uuid) {
-
+    component.deleteByUuid(principal, uuid);
   }
 
 }

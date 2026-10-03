@@ -48,7 +48,7 @@ public class KcServiceImpl implements KcService {
   @Value("${keycloak.host.admin}")
   private String urlAdmin;
   public static final String KEYCLOAK = "KEYCLOAK";
-  private final AdminRestHeadersProvider adminHeadersProvider;
+  private final AdminRestHeadersProvider headersProvider;
   private final RestErrorHandler errorHandler;
   private final RestClientExecutor restClient;
 
@@ -58,7 +58,7 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.GET,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         KcUser.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.OK) {
@@ -74,7 +74,7 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         url,
         HttpMethod.GET,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         KcGroup.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.OK) {
@@ -92,7 +92,7 @@ public class KcServiceImpl implements KcService {
             .queryParam("exact", true)
             .toUriString(),
         HttpMethod.GET,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         KcUser[].class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.OK) {
@@ -114,7 +114,7 @@ public class KcServiceImpl implements KcService {
             .queryParam("max", pageable.getPageSize())
             .toUriString(),
         HttpMethod.GET,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         KcUser[].class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT || response.getBody() == null) {
@@ -137,7 +137,7 @@ public class KcServiceImpl implements KcService {
             .queryParam("briefRepresentation", false)
             .toUriString(),
         HttpMethod.GET,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         KcGroup[].class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT || response.getBody() == null) {
@@ -150,13 +150,13 @@ public class KcServiceImpl implements KcService {
   }
 
   @Override
-  public KcUser createKeycloakUser(CreateKcUser request) {
+  public KcUser createKcUser(CreateKcUser request) {
     String url = UriComponentsBuilder.fromUriString(urlUser).toUriString();
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
         url,
         HttpMethod.POST,
-        new HttpEntity<>(buildPayload(request), adminHeadersProvider.build()),
+        new HttpEntity<>(buildPayload(request), headersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.CREATED) {
@@ -176,7 +176,7 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         url,
         HttpMethod.POST,
-        new HttpEntity<>(buildPayload(request), adminHeadersProvider.build()),
+        new HttpEntity<>(buildPayload(request), headersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.CREATED) {
@@ -187,12 +187,12 @@ public class KcServiceImpl implements KcService {
   }
 
   @Override
-  public KcUser updateKeycloakUser(UUID uuid, UpdateKcUser request) {
+  public KcUser updateKcUser(UUID uuid, UpdateKcUser request) {
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.PUT,
-        new HttpEntity<>(buildPayload(request), adminHeadersProvider.build()),
+        new HttpEntity<>(buildPayload(request), headersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
@@ -203,12 +203,12 @@ public class KcServiceImpl implements KcService {
   }
 
   @Override
-  public Boolean deleteKeycloakUser(UUID uuid) {
+  public Boolean deleteKcUser(UUID uuid) {
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.DELETE,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
@@ -219,12 +219,28 @@ public class KcServiceImpl implements KcService {
   }
 
   @Override
-  public Boolean disableKeycloakUser(UUID uuid, Boolean isEnabled) {
+  public Boolean deleteKcGroup(UUID uuid) {
+    ResponseEntity<Void> response = restClient.exchange(
+        KEYCLOAK,
+        UriComponentsBuilder.fromUriString(urlGroup).pathSegment(uuid.toString()).toUriString(),
+        HttpMethod.DELETE,
+        new HttpEntity<>(headersProvider.build()),
+        Void.class, errorHandler
+    );
+    if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+      log.info("Gruppo eliminato con successo su keycloak");
+      return true;
+    }
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), urlUser, response.getBody());
+  }
+
+  @Override
+  public Boolean disableKcUser(UUID uuid, Boolean isEnabled) {
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.PUT,
-        new HttpEntity<>(buildPayload(isEnabled), adminHeadersProvider.build()),
+        new HttpEntity<>(buildPayload(isEnabled), headersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
@@ -242,7 +258,7 @@ public class KcServiceImpl implements KcService {
             .pathSegment(userUuid.toString(), "groups", groupUuid.toString()).build()
             .toUriString(),
         HttpMethod.PUT,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
@@ -257,7 +273,7 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         UriComponentsBuilder.fromUriString(urlUser).pathSegment("count").build().toUriString(),
         HttpMethod.GET,
-        new HttpEntity<>(adminHeadersProvider.build()),
+        new HttpEntity<>(headersProvider.build()),
         Integer.class, errorHandler
     );
     return response.getBody() != null ? response.getBody() : 0L;

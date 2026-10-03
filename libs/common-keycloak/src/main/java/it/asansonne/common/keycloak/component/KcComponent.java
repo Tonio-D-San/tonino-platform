@@ -81,6 +81,14 @@ public interface KcComponent {
   Boolean deleteKcUser(UUID uuid);
 
   /**
+   * Delete kc group boolean.
+   *
+   * @param uuid the uuid
+   * @return the boolean
+   */
+  Boolean deleteKcGroup(UUID uuid);
+
+  /**
    * Delete business user.
    *
    * @param uuid      the uuid

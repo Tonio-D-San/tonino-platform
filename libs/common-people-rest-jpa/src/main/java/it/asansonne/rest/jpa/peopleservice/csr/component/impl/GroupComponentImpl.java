@@ -50,6 +50,9 @@ public class GroupComponentImpl implements GroupComponent {
 
   @Override
   public Boolean deleteByUuid(Principal principal, UUID uuid) {
+    if(Boolean.TRUE.equals(kcComponent.deleteKcGroup(uuid))) {
+      return service.deleteByUuid(principal, this.service.findByUuid(principal, uuid));
+    }
     return false;
   }
 
