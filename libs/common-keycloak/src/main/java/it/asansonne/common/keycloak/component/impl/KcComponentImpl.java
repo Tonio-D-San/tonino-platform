@@ -1,6 +1,7 @@
 package it.asansonne.common.keycloak.component.impl;
 
 import it.asansonne.common.keycloak.component.KcComponent;
+import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
 import it.asansonne.common.keycloak.dto.output.KcGroup;
@@ -24,7 +25,7 @@ public class KcComponentImpl implements KcComponent {
 
   @Override
   public KcUser findByUuid(UUID uuid) {
-    return service.findByUuid(uuid);
+    return service.findUserByUuid(uuid);
   }
 
   @Override
@@ -46,6 +47,11 @@ public class KcComponentImpl implements KcComponent {
   }
 
   @Override
+  public KcGroup createKcGroup(CreateKcGroup group) {
+    return service.createKcGroup(group);
+  }
+
+  @Override
   public KcUser updateKcUser(UUID uuid, UpdateKcUser user) {
     return service.updateKeycloakUser(uuid, user);
   }
@@ -61,7 +67,7 @@ public class KcComponentImpl implements KcComponent {
   }
 
   @Override
-  public Page<KcUser> findAll(Pageable pageable) {
+  public Page<KcUser> findAllUsers(Pageable pageable) {
     return service.findAll(pageable);
   }
 

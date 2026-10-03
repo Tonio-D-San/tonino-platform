@@ -29,7 +29,7 @@ public class GroupModel extends BaseModel {
   private String role;
 
   @Column(nullable = false)
-  private String path;
+  private String path; //TODO: capire se avere path ha ancora senso
 
   @Column(name = "description")
   private String description;

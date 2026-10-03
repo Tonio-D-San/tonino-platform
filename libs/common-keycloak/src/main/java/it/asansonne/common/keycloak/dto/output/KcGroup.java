@@ -1,10 +1,12 @@
 package it.asansonne.common.keycloak.dto.output;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.asansonne.common.core.dto.Dto;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record KcGroup(
     UUID id,
     String name,
@@ -15,7 +17,7 @@ public record KcGroup(
 
   public static final String DESCRIPTION = "description";
 
-  public String description() {
+  public String getDescription() {
     if (attributes == null || attributes.get(DESCRIPTION) == null
         || attributes.get(DESCRIPTION).isEmpty()) {
       return null;

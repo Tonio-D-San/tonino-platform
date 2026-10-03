@@ -13,10 +13,12 @@ import it.asansonne.common.core.exception.ExceptionMessage;
 import it.asansonne.common.rest.schema.PageUserSchema;
 import java.security.Principal;
 import java.util.UUID;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -225,7 +227,7 @@ public interface GetController<F extends Filter, S extends Dto> {
   @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
   Page<S> findAll(
       Principal principal,
-      F filter,
+      @ParameterObject @ModelAttribute F filter,
       @Parameter(name = "page", description = "page.description", example = DEFAULT_PAGE)
       @RequestParam(defaultValue = DEFAULT_PAGE) Integer page,
       @Parameter(name = "size", description = "size.description", example = DEFAULT_SIZE)

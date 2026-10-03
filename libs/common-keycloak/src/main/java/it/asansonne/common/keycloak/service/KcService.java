@@ -1,5 +1,6 @@
 package it.asansonne.common.keycloak.service;
 
+import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
 import it.asansonne.common.keycloak.dto.output.KcGroup;
@@ -20,7 +21,16 @@ public interface KcService {
    * @param uuid the uuid
    * @return the keycloak user
    */
-  KcUser findByUuid(UUID uuid);
+  KcUser findUserByUuid(UUID uuid);
+
+  /**
+   * Find group by uuid kc group.
+   *
+   * @param uuid the uuid
+   * @return the kc group
+   */
+  KcGroup findGroupByUuid(UUID uuid);
+
 
   /**
    * Read business user string.
@@ -38,6 +48,11 @@ public interface KcService {
    */
   Page<KcUser> findAll(Pageable pageable);
 
+  /**
+   * Find all groups list.
+   *
+   * @return the list
+   */
   List<KcGroup> findAllGroups();
 
   /**
@@ -47,6 +62,14 @@ public interface KcService {
    * @return the string
    */
   KcUser createKeycloakUser(CreateKcUser request);
+
+  /**
+   * Create kc group.
+   *
+   * @param request the request
+   * @return the kc group
+   */
+  KcGroup createKcGroup(CreateKcGroup request);
 
   /**
    * Update user update business user.

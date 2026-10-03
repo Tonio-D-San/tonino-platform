@@ -1,6 +1,7 @@
 package it.asansonne.common.rest.autoconfigure;
 
 import it.asansonne.common.rest.exception.handler.RestErrorHandler;
+import it.asansonne.common.rest.exception.handler.ApiExceptionHandler;
 import it.asansonne.common.rest.exception.handler.impl.RestErrorHandlerImpl;
 import it.asansonne.common.rest.executor.RestClientExecutor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -12,6 +13,12 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfiguration
 @ConditionalOnClass(RestClientExecutor.class)
 public class CommonRestAutoConfiguration {
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ApiExceptionHandler apiExceptionHandler() {
+    return new ApiExceptionHandler();
+  }
 
   @Bean
   @ConditionalOnMissingBean

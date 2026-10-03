@@ -12,7 +12,7 @@ public record FilterGroup(
     UUID uuid,
     Boolean isActive,
     String role,
-    String path,
+    String path, //TODO: cercare per role e non per path
     String description
 ) implements Filter {
 }

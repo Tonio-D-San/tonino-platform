@@ -41,7 +41,7 @@ public class GroupMapper
     );
     GroupModel group = GroupModel.builder()
         .role(input.role())
-        .path(input.path())
+        .path("") //TODO: cercare una soluzione perché non esiste più path
         .description(input.description())
         .build();
     log.debug("to Group: {}", group.toString());

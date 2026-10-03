@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.Collections;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -22,6 +23,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 /**
  * The type Open api configuration.
  */
+@Slf4j
 @Configuration
 public class OpenApiConfiguration {
   private static final String SEC_SCHEME_OAUTH2 = "oauth2";
@@ -55,15 +57,15 @@ public class OpenApiConfiguration {
             .title("Welcome in " + appName)
             .description(appDescription +
                 """
-                  <div style="font-size: 15px; line-height: 1.5;">
-                    <b>%s</b> è il servizio centralizzato per gestire autenticazioni tramite Keycloak e altri provider.<br>
-                    <ul>
-                      <li>Login semplificato (OAuth2 Social)</li>
-                      <li>Gestione utenti interna</li>
-                      <li>API documentate e pronte all’integrazione</li>
-                    </ul>
-                  </div>
-                """.formatted(appDescription)
+                      <div style="font-size: 15px; line-height: 1.5;">
+                        <b>%s</b> è il servizio centralizzato per gestire autenticazioni tramite Keycloak e altri provider.<br>
+                        <ul>
+                          <li>Login semplificato (OAuth2 Social)</li>
+                          <li>Gestione utenti interna</li>
+                          <li>API documentate e pronte all’integrazione</li>
+                        </ul>
+                      </div>
+                    """.formatted(appDescription)
             )
             .version("v" + appVersion)
             .contact(new Contact()
@@ -74,17 +76,17 @@ public class OpenApiConfiguration {
                 .name("MIT License")
                 .url("https://opensource.org/licenses/MIT"))
         ).components(new Components().addSecuritySchemes(
-                SEC_SCHEME_OAUTH2,
-                new SecurityScheme()
-                    .type(SecurityScheme.Type.OAUTH2)
-                    .description("Oauth2 flow")
-                    .flows(new OAuthFlows().authorizationCode(new OAuthFlow()
-                        .authorizationUrl(authUrl + "/auth")
-                        .tokenUrl(authUrl + "/token"))
-                    )
+            SEC_SCHEME_OAUTH2,
+            new SecurityScheme()
+                .type(SecurityScheme.Type.OAUTH2)
+                .description("Oauth2 flow")
+                .flows(new OAuthFlows().authorizationCode(new OAuthFlow()
+                    .authorizationUrl(authUrl + "/auth")
+                    .tokenUrl(authUrl + "/token"))
+                )
         )).security(Collections.singletonList(
-            new SecurityRequirement().addList(SEC_SCHEME_OAUTH2))
-        ).externalDocs(new ExternalDocumentation()
+            new SecurityRequirement().addList(SEC_SCHEME_OAUTH2)
+        )).externalDocs(new ExternalDocumentation()
             .description("Documentazione estesa e guide di integrazione")
             .url("https://github.com/asansonne/tonino-platform/wiki")
         );

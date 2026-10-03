@@ -16,6 +16,7 @@ services:
       nofile:
         soft: 65536
         hard: 65536
+#    psw = Zoology0-Emphasize-Keenly
 
   postgres:
     image: postgres:17-alpine
@@ -26,7 +27,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "${DB_EXTERNAL_PORT}:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ${DB_INIT_FOLDER}/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -45,7 +46,7 @@ services:
     command: start-dev --import-realm
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:${DB_PORT:-5432}/${KC_DB_NAME}
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${KC_DB_NAME}
       KC_DB_USERNAME: ${KC_DB_USER}
       KC_DB_PASSWORD: ${KC_DB_PASSWORD}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
@@ -56,11 +57,16 @@ services:
       KC_HTTP_ENABLED: ${KC_HTTP_ENABLED:-true}
       KC_PROXY_HEADERS: xforwarded
 
-      PLATFORM_BACKEND_CLIENT_ID: ${PLATFORM_BACKEND_CLIENT_ID}
+      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:-people-realm}
+      PLATFORM_BACKEND_CLIENT_SECRET: ${PLATFORM_BACKEND_CLIENT_SECRET}
+
+    volumes:
+      - ${REALM_CONFIG_FOLDER}:/opt/keycloak/data/import:ro
     ports:
       - '5443:8080'
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - backend-network
       - frontend-network

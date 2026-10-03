@@ -1,5 +1,5 @@
 {
-  "realm": "tonino-platform",
+  "realm": "${KEYCLOAK_REALM_NAME}",
   "displayName": "Tonino Platform",
   "enabled": true,
   "registrationAllowed": false,
@@ -16,7 +16,7 @@
 
   "clients": [
     {
-      "clientId": "${PLATFORM_BACKEND_CLIENT_ID}",
+      "clientId": "people-client-be",
       "name": "Platform Backend",
       "description": "Technical client used by the Platform backend",
       "enabled": true,
@@ -37,7 +37,7 @@
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "included.client.audience": "${PLATFORM_API_CLIENT_ID}",
+            "included.client.audience": "people-client-api",
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true"
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "clientId": "${PLATFORM_API_CLIENT_ID}",
+      "clientId": "people-client-api",
       "name": "Platform API",
       "description": "Platform REST API audience",
       "enabled": true,
@@ -59,7 +59,7 @@
       "serviceAccountsEnabled": false
     },
     {
-      "clientId": "${PLATFORM_APP_CLIENT_ID}",
+      "clientId": "people-client-app",
       "name": "Platform App",
       "description": "Public client for Platform Web and Mobile",
       "enabled": true,
@@ -70,13 +70,6 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
-      "redirectUris": [
-        "${PLATFORM_APP_WEB_REDIRECT_URI}",
-        "${PLATFORM_APP_MOBILE_REDIRECT_URI}"
-      ],
-      "webOrigins": [
-        "${PLATFORM_APP_WEB_ORIGIN}"
-      ],
       "attributes": {
         "pkce.code.challenge.method": "S256"
       },
@@ -87,7 +80,7 @@
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
           "config": {
-            "included.client.audience": "${PLATFORM_API_CLIENT_ID}",
+            "included.client.audience": "people-client-api",
             "id.token.claim": "false",
             "access.token.claim": "true",
             "introspection.token.claim": "true"
@@ -112,9 +105,9 @@
   ],
   "users": [
     {
-      "username": "service-account-${PLATFORM_BACKEND_CLIENT_ID}",
+      "username": "service-account-people-client-be",
       "enabled": true,
-      "serviceAccountClientId": "${PLATFORM_BACKEND_CLIENT_ID}",
+      "serviceAccountClientId": "people-client-be",
       "clientRoles": {
         "realm-management": [
           "manage-users"

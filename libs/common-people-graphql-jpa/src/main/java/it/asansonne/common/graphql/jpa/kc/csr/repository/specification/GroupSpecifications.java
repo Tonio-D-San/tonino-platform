@@ -29,7 +29,7 @@ public final class GroupSpecifications implements ModelSpecifications<GroupModel
         SpecificationUtils.hasUuid(filter.uuid()),
         SpecificationUtils.isActive(filter.isActive()),
         nameLike(filter.role()),
-        pathLike(filter.path()),
+        pathLike(filter.path()), //TODO: cercare per role e non per path
         descriptionLike(filter.description())
     );
   }

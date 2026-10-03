@@ -28,7 +28,9 @@ public enum KcUserPayloadKey {
   FEDERATED_IDENTITIES("federatedIdentities"),
   SERVICE_ACCOUNT_CLIENT_ID("serviceAccountClientId"),
   DISABLEABLE_CREDENTIAL_TYPES("disableableCredentialTypes"),
-  NOT_BEFORE("notBefore");
+  NOT_BEFORE("notBefore"),
+
+  NAME("name");
 
   private final String key;
 

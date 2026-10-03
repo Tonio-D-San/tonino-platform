@@ -3,15 +3,18 @@ package it.asansonne.common.keycloak.utils;
 import static it.asansonne.common.keycloak.enums.KcCredentialPayloadKey.TEMPORARY;
 import static it.asansonne.common.keycloak.enums.KcCredentialPayloadKey.TYPE;
 import static it.asansonne.common.keycloak.enums.KcCredentialPayloadKey.VALUE;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.ATTRIBUTES;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.CREDENTIALS;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL_VERIFIED;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.ENABLED;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.FIRST_NAME;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.LAST_NAME;
+import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.NAME;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.REQUIRED_ACTIONS;
 import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.USERNAME;
 
+import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
 import it.asansonne.common.keycloak.enums.RequiredAction;
@@ -56,15 +59,24 @@ public class RestCall {
     return payload;
   }
 
+  public static Map<String, Object> buildPayload(CreateKcGroup request) {
+    Map<String, Object> payload = new LinkedHashMap<>();
+    NAME.put(payload, request.name());
+    if (request.attributes() != null && !request.attributes().isEmpty()) {
+      ATTRIBUTES.put(payload, request.attributes());
+    }
+    return payload;
+  }
+
   public static Map<String, Object> buildPayload(UpdateKcUser request) {
     Map<String, Object> payload = new LinkedHashMap<>();
-    payload.put(EMAIL.getKey(), request.email());
+    EMAIL.put(payload, request.email());
     return payload;
   }
 
   public static Map<String, Object> buildPayload(Boolean isEnabled) {
     Map<String, Object> payload = new LinkedHashMap<>();
-    payload.put(ENABLED.getKey(), isEnabled);
+    ENABLED.put(payload, isEnabled);
     return payload;
   }
 }

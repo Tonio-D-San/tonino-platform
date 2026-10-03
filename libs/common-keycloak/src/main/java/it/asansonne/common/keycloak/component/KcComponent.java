@@ -1,5 +1,6 @@
 package it.asansonne.common.keycloak.component;
 
+import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
 import it.asansonne.common.keycloak.dto.output.KcGroup;
@@ -32,6 +33,21 @@ public interface KcComponent {
   KcUser findByEmail(String email);
 
   /**
+   * Find all page.
+   *
+   * @param pageable the pageable
+   * @return the page
+   */
+  Page<KcUser> findAllUsers(Pageable pageable);
+
+  /**
+   * Find all groups list.
+   *
+   * @return the list
+   */
+  List<KcGroup> findAllGroups();
+
+  /**
    * Create business user create business user.
    *
    * @param user the business user
@@ -40,9 +56,17 @@ public interface KcComponent {
   KcUser createKcUser(CreateKcUser user);
 
   /**
+   * Create kc group.
+   *
+   * @param group the user
+   * @return the kc group
+   */
+  KcGroup createKcGroup(CreateKcGroup group);
+
+  /**
    * Update business user update business user.
    *
-   * @param uuid         the uuid
+   * @param uuid the uuid
    * @param user the business user
    * @return the update business user
    */
@@ -65,7 +89,4 @@ public interface KcComponent {
    */
   Boolean disableKcUser(UUID uuid, Boolean isEnabled);
 
-  Page<KcUser> findAll(Pageable pageable);
-
-  List<KcGroup> findAllGroups();
 }

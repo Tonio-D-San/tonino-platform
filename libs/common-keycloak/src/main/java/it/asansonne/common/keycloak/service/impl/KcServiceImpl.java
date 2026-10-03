@@ -6,6 +6,7 @@ import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL;
 import static it.asansonne.common.keycloak.utils.RestCall.buildPayload;
 
 import it.asansonne.common.core.exception.custom.NotFoundException;
+import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
 import it.asansonne.common.keycloak.dto.output.KcGroup;
@@ -13,7 +14,6 @@ import it.asansonne.common.keycloak.dto.output.KcUser;
 import it.asansonne.common.keycloak.exception.KeycloakCallException;
 import it.asansonne.common.keycloak.service.KcService;
 import it.asansonne.common.keycloak.utils.AdminRestHeadersProvider;
-import it.asansonne.common.keycloak.utils.JwtRestHeadersProvider;
 import it.asansonne.common.rest.exception.handler.RestErrorHandler;
 import it.asansonne.common.rest.executor.RestClientExecutor;
 import java.net.URI;
@@ -43,27 +43,44 @@ public class KcServiceImpl implements KcService {
 
   @Value("${keycloak.host.user}")
   private String urlUser;
+  @Value("${keycloak.host.groups}")
+  private String urlGroup;
   @Value("${keycloak.host.admin}")
   private String urlAdmin;
   public static final String KEYCLOAK = "KEYCLOAK";
-  private final JwtRestHeadersProvider headersProvider;
   private final AdminRestHeadersProvider adminHeadersProvider;
   private final RestErrorHandler errorHandler;
   private final RestClientExecutor restClient;
 
   @Override
-  public KcUser findByUuid(UUID uuid) {
+  public KcUser findUserByUuid(UUID uuid) {
     ResponseEntity<KcUser> response = restClient.exchange(
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.GET,
-        new HttpEntity<>(headersProvider.build()),
+        new HttpEntity<>(adminHeadersProvider.build()),
         KcUser.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.OK) {
       return response.getBody();
     }
     throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), urlUser, response.getBody());
+  }
+
+  @Override
+  public KcGroup findGroupByUuid(UUID uuid) {
+    String url = UriComponentsBuilder.fromUriString(urlGroup).pathSegment(uuid.toString()).toUriString();
+    ResponseEntity<KcGroup> response = restClient.exchange(
+        KEYCLOAK,
+        url,
+        HttpMethod.GET,
+        new HttpEntity<>(adminHeadersProvider.build()),
+        KcGroup.class, errorHandler
+    );
+    if (response.getStatusCode() == HttpStatus.OK) {
+      return response.getBody();
+    }
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), url, response.getBody());
   }
 
   @Override
@@ -75,7 +92,7 @@ public class KcServiceImpl implements KcService {
             .queryParam("exact", true)
             .toUriString(),
         HttpMethod.GET,
-        new HttpEntity<>(headersProvider.build()),
+        new HttpEntity<>(adminHeadersProvider.build()),
         KcUser[].class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.OK) {
@@ -97,7 +114,7 @@ public class KcServiceImpl implements KcService {
             .queryParam("max", pageable.getPageSize())
             .toUriString(),
         HttpMethod.GET,
-        new HttpEntity<>(headersProvider.build()),
+        new HttpEntity<>(adminHeadersProvider.build()),
         KcUser[].class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT || response.getBody() == null) {
@@ -134,18 +151,39 @@ public class KcServiceImpl implements KcService {
 
   @Override
   public KcUser createKeycloakUser(CreateKcUser request) {
+    String url = UriComponentsBuilder.fromUriString(urlUser).toUriString();
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
-        UriComponentsBuilder.fromUriString(urlUser).toUriString(),
+        url,
         HttpMethod.POST,
-        new HttpEntity<>(buildPayload(request), headersProvider.build()),
+        new HttpEntity<>(buildPayload(request), adminHeadersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.CREATED) {
       log.info("Utente creato con successo su keycloak");
-      return this.findByUuid(extractUserUuid(response.getHeaders().getLocation()));
+      return this.findUserByUuid(extractUuidFromLocation(response.getHeaders().getLocation(), url));
     }
     throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), urlUser, response.getBody());
+  }
+
+  @Override
+  public KcGroup createKcGroup(CreateKcGroup request) {
+    String url = request.parentId() == null
+        ? urlGroup
+        : UriComponentsBuilder.fromUriString(urlGroup)
+        .pathSegment(request.parentId().toString(), "children").toUriString();
+    ResponseEntity<Void> response = restClient.exchange(
+        KEYCLOAK,
+        url,
+        HttpMethod.POST,
+        new HttpEntity<>(buildPayload(request), adminHeadersProvider.build()),
+        Void.class, errorHandler
+    );
+    if (response.getStatusCode() == HttpStatus.CREATED) {
+      log.info("Gruppo creato con successo su keycloak");
+      return this.findGroupByUuid(extractUuidFromLocation(response.getHeaders().getLocation(), url));
+    }
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), url, response.getBody());
   }
 
   @Override
@@ -154,12 +192,12 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.PUT,
-        new HttpEntity<>(buildPayload(request), headersProvider.build()),
+        new HttpEntity<>(buildPayload(request), adminHeadersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
       log.info("Utente aggiornato con successo su keycloak");
-      return this.findByUuid(uuid);
+      return this.findUserByUuid(uuid);
     }
     throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), urlUser, response.getBody());
   }
@@ -170,7 +208,7 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.DELETE,
-        new HttpEntity<>(headersProvider.build()),
+        new HttpEntity<>(adminHeadersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
@@ -186,7 +224,7 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         userUrl(uuid),
         HttpMethod.PUT,
-        new HttpEntity<>(buildPayload(isEnabled), headersProvider.build()),
+        new HttpEntity<>(buildPayload(isEnabled), adminHeadersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
@@ -204,7 +242,7 @@ public class KcServiceImpl implements KcService {
             .pathSegment(userUuid.toString(), "groups", groupUuid.toString()).build()
             .toUriString(),
         HttpMethod.PUT,
-        new HttpEntity<>(headersProvider.build()),
+        new HttpEntity<>(adminHeadersProvider.build()),
         Void.class, errorHandler
     );
     if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
@@ -219,7 +257,7 @@ public class KcServiceImpl implements KcService {
         KEYCLOAK,
         UriComponentsBuilder.fromUriString(urlUser).pathSegment("count").build().toUriString(),
         HttpMethod.GET,
-        new HttpEntity<>(headersProvider.build()),
+        new HttpEntity<>(adminHeadersProvider.build()),
         Integer.class, errorHandler
     );
     return response.getBody() != null ? response.getBody() : 0L;
@@ -232,11 +270,11 @@ public class KcServiceImpl implements KcService {
         .toUriString();
   }
 
-  private UUID extractUserUuid(URI location) {
+  private UUID extractUuidFromLocation(URI location, String url) {
     if (location == null || location.getPath() == null || location.getPath().isBlank()) {
       throw new KeycloakCallException(
           KEYCLOAK_CALL_ERROR.getCode(),
-          urlUser,
+          url,
           "Missing Location header"
       );
     }
