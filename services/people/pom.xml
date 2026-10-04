@@ -29,6 +29,15 @@
         <project.version>1.0.0</project.version>
         <logback.version>1.6.3</logback.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>asansonne</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Tonio-D-San/tonino-platform</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
