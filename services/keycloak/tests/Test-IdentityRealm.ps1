@@ -15,7 +15,7 @@ function docker {
                 APPLICATION_URL = 'http://localhost:8082'; FRONTEND_URL = 'http://localhost:3000'
                 KC_HOSTNAME = 'http://keycloak.localhost:5443'
             } }
-            people = @{ environment = @{ SPRING_PROFILES_ACTIVE = 'dev' } }
+            'identity-service' = @{ environment = @{ SPRING_PROFILES_ACTIVE = 'dev' } }
         }
     } | ConvertTo-Json -Depth 20
 }
@@ -76,7 +76,7 @@ function Invoke-RestMethod {
     }
     throw "Unexpected API call: $Method $path"
 }
-$setup = Join-Path $PSScriptRoot '../Initialize-PeopleRealm.ps1'
+$setup = Join-Path $PSScriptRoot '../Initialize-IdentityRealm.ps1'
 $credential = [PSCredential]::new('test-admin', (ConvertTo-SecureString 'test-password' -AsPlainText -Force))
 & $setup -EnvFile 'mock.env' -AdminCredential $credential
 $frontend = $peopleRealmTestState.clients['gestionale-fe']

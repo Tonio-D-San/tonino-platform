@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>it.asansonne</groupId>
-    <artifactId>people</artifactId>
+    <artifactId>identity-service</artifactId>
     <version>1.0.0</version>
-    <name>people</name>
-    <description>people</description>
+    <name>identity-service</name>
+    <description>identity-service</description>
     <developers>
         <developer>
             <id>tonino</id>
@@ -25,7 +25,7 @@
         <jackson-2-bom.version>2.22.3</jackson-2-bom.version>
         <jackson-bom.version>3.2.3</jackson-bom.version>
         <tomcat.version>11.0.26</tomcat.version>
-        <application.name>people-service</application.name>
+        <application.name>identity-service</application.name>
         <platform.version>1.2.0-SNAPSHOT</platform.version>
         <project.version>1.0.0</project.version>
         <logback.version>1.6.3</logback.version>

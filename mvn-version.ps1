@@ -1,4 +1,4 @@
-# Align the platform reactor and the consuming People service without publishing anything.
+# Align the platform reactor and the consuming Identity service without publishing anything.
 # mvn-version.ps1 -Version x.x.x-SNAPSHOT
 [CmdletBinding(SupportsShouldProcess)]
 param(
@@ -25,7 +25,7 @@ foreach ($path in $paths) {
     [xml]$validated = $content
     $changes[$path] = $content
 }
-$servicePom = Join-Path $PSScriptRoot 'services/people/pom.xml'
+$servicePom = Join-Path $PSScriptRoot 'services/identity-service/pom.xml'
 $content = Get-Content -LiteralPath $servicePom -Raw -Encoding UTF8
 if ($content -notmatch '<platform.version>[^<]+</platform.version>') {
     throw 'The People POM must declare platform.version.'

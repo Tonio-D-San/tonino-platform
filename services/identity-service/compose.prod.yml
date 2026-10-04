@@ -1,6 +1,6 @@
 # HTTPS terminates at a reverse proxy on the Docker host.
 services:
-  people:
+  identity-service:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod

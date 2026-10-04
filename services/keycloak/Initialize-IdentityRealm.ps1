@@ -1,5 +1,5 @@
 <#
-Creates missing resources and reconciles the three People clients in an existing realm.
+Creates missing resources and reconciles the three Identity clients in an existing realm.
 Uses Compose interpolation as the single source of names, URLs and secrets.
 No realm/user deletion. Existing custom client mappers, attributes and redirects are retained.
 #>
@@ -12,8 +12,8 @@ param(
     [switch]$Plan
 )
 $ErrorActionPreference = 'Stop'
-$compose = Join-Path $PSScriptRoot '../people/compose.yml'
-$override = Join-Path $PSScriptRoot "../people/compose.$Profile.yml"
+$compose = Join-Path $PSScriptRoot '../identity-service/compose.yml'
+$override = Join-Path $PSScriptRoot "../identity-service/compose.$Profile.yml"
 $raw = & docker compose --env-file $EnvFile -f $compose -f $override config --format json
 if ($LASTEXITCODE -ne 0) { throw 'Compose configuration failed.' }
 $config = ($raw -join "`n") | ConvertFrom-Json
@@ -21,7 +21,7 @@ $vars = $config.services.keycloak.environment
 if ($config.name -ne "tonino-platform-$Profile") {
     throw 'The selected Compose profile does not match the environment.'
 }
-$template = Get-Content (Join-Path $PSScriptRoot 'people.json') -Raw
+$template = Get-Content (Join-Path $PSScriptRoot 'identity-service.json') -Raw
 $rendered = [regex]::Replace($template, '\$\{([A-Z_]+)\}', {
     param($match)
     $name = $match.Groups[1].Value
@@ -162,4 +162,4 @@ $assigned = @(Invoke-Admin Get $mappingPath)
 if (!($assigned | Where-Object { $_.id -eq $role.id })) {
     $null = Invoke-Admin Post $mappingPath @($role)
 }
-Write-Output 'People realm configuration applied. Existing users and unrelated resources retained.'
+Write-Output 'Identity realm configuration applied. Existing users and unrelated resources retained.'

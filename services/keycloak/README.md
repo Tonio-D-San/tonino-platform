@@ -1,8 +1,8 @@
 # Template e setup del realm People
 
-Il file `people.json` e' un template condiviso. Il Compose fornisce APP_ID, realm, ID dei tre client, secret backend, APPLICATION_URL e FRONTEND_URL. Audience e service account usano gli stessi valori dell'applicazione. Il file viene montato con il nome `<realm>-realm.json`.
+Il file `identity-service.json` e' un template condiviso. Il Compose fornisce APP_ID, realm, ID dei tre client, secret backend, APPLICATION_URL e FRONTEND_URL. Audience e service account usano gli stessi valori dell'applicazione. Il file viene montato con il nome `<realm>-realm.json`.
 
-Per una nuova app copiare `services/people/.env.template`, impostare `APP_ID=gestionale` e compilare URL/credenziali. Il realm sara' `gestionale`; i client saranno `gestionale-api`, `gestionale-be` e `gestionale-fe`. Non e' necessario creare o modificare un JSON per ogni applicazione.
+Per una nuova app copiare `services/identity-service/.env.template`, impostare `APP_ID=gestionale` e compilare URL/credenziali. Il realm sara' `gestionale`; i client saranno `gestionale-api`, `gestionale-be` e `gestionale-fe`. Non e' necessario creare o modificare un JSON per ogni applicazione.
 
 Gli env locali precedenti hanno override espliciti per mantenere `people-realm` e `people-client-*`. Per adottare la convenzione su un nuovo realm rimuovere KEYCLOAK_REALM_NAME, KEYCLOAK_CLIENT_ID, KC_ADMIN_CLIENT_ID e KEYCLOAK_APP_CLIENT_ID, poi cambiare APP_ID. Questo crea nuove identita': non migra gli utenti del vecchio realm.
 
@@ -15,13 +15,13 @@ L'avvio Compose con `--import-realm` crea il realm e i client. Per un server Key
 Dalla radice del repository, visualizzare prima i nomi e l'operazione prevista, senza chiamare Keycloak:
 
 ```powershell
-./services/keycloak/Initialize-PeopleRealm.ps1 -EnvFile services/people/.env.dev -Profile dev -Plan
+./services/keycloak/Initialize-IdentityRealm.ps1 -EnvFile services/identity-service/.env.dev -Profile dev -Plan
 ```
 
 Applicare con un amministratore autorizzato a creare il realm e gestire i suoi client:
 
 ```powershell
-./services/keycloak/Initialize-PeopleRealm.ps1 -EnvFile services/people/.env.dev -Profile dev -AdminCredential (Get-Credential)
+./services/keycloak/Initialize-IdentityRealm.ps1 -EnvFile services/identity-service/.env.dev -Profile dev -AdminCredential (Get-Credential)
 ```
 
 Per produzione selezionare `.env.prod` e `-Profile prod`. Il comando usa la stessa interpolazione Compose dell'avvio. `-AdminRealm` e' `master` per default; il login usa `admin-cli`. Le credenziali di provisioning non sono memorizzate nell'env e non vengono passate a People. L'URL pubblico di Keycloak deve essere raggiungibile dal computer che esegue il comando.
@@ -33,7 +33,7 @@ Se si cambiano gli ID, vengono creati nuovi client: i precedenti non vengono rin
 Verifica offline del comando (API simulate):
 
 ```powershell
-./services/keycloak/tests/Test-PeopleRealm.ps1
+./services/keycloak/tests/Test-IdentityRealm.ps1
 ```
 
 Riferimenti: [import e placeholder Keycloak](https://www.keycloak.org/server/importExport), [Admin REST API](https://www.keycloak.org/docs-api/latest/rest-api/index.html).

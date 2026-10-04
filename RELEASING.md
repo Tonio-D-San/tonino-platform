@@ -15,7 +15,7 @@ Scegliere una versione nuova per ogni release. Per esempio, se 1.1.0 e' gia' sta
 ./mvn-deploy.cmd deploy
 ```
 
-Il primo script aggiorna parent, moduli e dipendenze interne, revision e platform.version del servizio People. Non cambia le versioni delle dipendenze esterne ne' la versione propria del servizio. Controllare il diff e conservare le modifiche nel controllo versione insieme ai sorgenti del rilascio.
+Il primo script aggiorna parent, moduli e dipendenze interne, revision e platform.version del servizio Identity. Non cambia le versioni delle dipendenze esterne ne' la versione propria del servizio. Controllare il diff e conservare le modifiche nel controllo versione insieme ai sorgenti del rilascio.
 
 `verify` compila ed esegue i test senza pubblicare. `deploy` esegue nuovamente la build completa e pubblica alla fine. Senza argomenti, `mvn-deploy.cmd` mantiene il comportamento precedente ed esegue `deploy`. JAVA_HOME e MAVEN_SETTINGS_FILE possono essere impostati dall'ambiente; altrimenti usa i percorsi locali gia' previsti dal progetto. Il codice di uscita Maven viene propagato al chiamante.
 
