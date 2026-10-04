@@ -6,6 +6,7 @@ import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL;
 import static it.asansonne.common.keycloak.utils.RestCall.buildPayload;
 
 import it.asansonne.common.core.exception.custom.NotFoundException;
+import it.asansonne.common.keycloak.config.PeopleProperties;
 import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
@@ -20,9 +21,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import it.asansonne.common.keycloak.config.PeopleProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,7 +38,6 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class KcServiceImpl implements KcService {
 
   private final PeopleProperties properties;
@@ -48,6 +46,18 @@ public class KcServiceImpl implements KcService {
   @Qualifier("keycloakRestErrorHandler")
   private final RestErrorHandler errorHandler;
   private final RestClientExecutor restClient;
+
+  public KcServiceImpl(
+      PeopleProperties properties,
+      AdminRestHeadersProvider headersProvider,
+      @Qualifier("keycloakRestErrorHandler") RestErrorHandler errorHandler,
+      RestClientExecutor restClient
+  ) {
+    this.properties = properties;
+    this.headersProvider = headersProvider;
+    this.errorHandler = errorHandler;
+    this.restClient = restClient;
+  }
 
   @Override
   public KcUser findUserByUuid(UUID uuid) {
