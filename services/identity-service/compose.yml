@@ -12,9 +12,9 @@ services:
       APPLICATION_URL: ${APPLICATION_URL:?Required}
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_PEOPLE_NAME: ${DB_PEOPLE_NAME:?Required}
-      DB_PEOPLE_USER: ${DB_PEOPLE_USER:?Required}
-      DB_PEOPLE_PASSWORD: ${DB_PEOPLE_PASSWORD:?Required}
+      DB_IDENTITY_NAME: ${DB_IDENTITY_NAME:?Required}
+      DB_IDENTITY_USER: ${DB_IDENTITY_USER:?Required}
+      DB_IDENTITY_PASSWORD: ${DB_IDENTITY_PASSWORD:?Required}
       KEYCLOAK_URL: ${KEYCLOAK_URL:?Required}
       APP_ID: ${APP_ID:-identity-service}
       KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:-${APP_ID:-identity-service}}
@@ -35,9 +35,9 @@ services:
       POSTGRES_USER: ${DB_USER:?Required}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?Required}
       POSTGRES_DB: ${DB_NAME:-postgres}
-      DB_PEOPLE_NAME: ${DB_PEOPLE_NAME:?Required}
-      DB_PEOPLE_USER: ${DB_PEOPLE_USER:?Required}
-      DB_PEOPLE_PASSWORD: ${DB_PEOPLE_PASSWORD:?Required}
+      DB_IDENTITY_NAME: ${DB_IDENTITY_NAME:?Required}
+      DB_IDENTITY_USER: ${DB_IDENTITY_USER:?Required}
+      DB_IDENTITY_PASSWORD: ${DB_IDENTITY_PASSWORD:?Required}
       KC_DB_NAME: ${KC_DB_NAME:?Required}
       KC_DB_USER: ${KC_DB_USER:?Required}
       KC_DB_PASSWORD: ${KC_DB_PASSWORD:?Required}

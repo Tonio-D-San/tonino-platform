@@ -30,8 +30,8 @@ Per build di sviluppo pubblicabili ripetutamente usare una versione SNAPSHOT:
 ./mvn-deploy.cmd deploy
 ```
 
-GitHub Packages supporta snapshot Maven. I consumer devono abilitare gli snapshot nel repository e possono usare `mvn -U` per controllare gli aggiornamenti. People li abilita nel proprio POM; per una release definitiva selezionare una versione senza -SNAPSHOT. Non eseguire in parallelo due pubblicazioni della stessa versione snapshot.
+GitHub Packages supporta snapshot Maven. I consumer devono abilitare gli snapshot nel repository e possono usare `mvn -U` per controllare gli aggiornamenti. Identity li abilita nel proprio POM; per una release definitiva selezionare una versione senza -SNAPSHOT. Non eseguire in parallelo due pubblicazioni della stessa versione snapshot.
 
-La build Docker continua a scaricare le librerie pubblicate: dopo il deploy ricostruire People. Con snapshot, una build Docker riutilizzata dalla cache non controlla gli aggiornamenti: usare `docker compose ... build --no-cache people` quando necessario.
+La build Docker continua a scaricare le librerie pubblicate: dopo il deploy ricostruire Identity. Con snapshot, una build Docker riutilizzata dalla cache non controlla gli aggiornamenti: usare `docker compose ... build --no-cache identity` quando necessario.
 
 Riferimenti: [Maven deployAtEnd](https://maven.apache.org/plugins/maven-deploy-plugin/deploy-mojo.html), [GitHub Maven registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry).

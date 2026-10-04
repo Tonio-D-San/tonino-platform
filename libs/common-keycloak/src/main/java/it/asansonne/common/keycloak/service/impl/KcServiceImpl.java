@@ -6,7 +6,7 @@ import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL;
 import static it.asansonne.common.keycloak.utils.RestCall.buildPayload;
 
 import it.asansonne.common.core.exception.custom.NotFoundException;
-import it.asansonne.common.keycloak.config.PeopleProperties;
+import it.asansonne.common.keycloak.config.IdentityProperties;
 import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
@@ -40,7 +40,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class KcServiceImpl implements KcService {
 
-  private final PeopleProperties properties;
+  private final IdentityProperties properties;
   public static final String KEYCLOAK = "KEYCLOAK";
   private final AdminRestHeadersProvider headersProvider;
   @Qualifier("keycloakRestErrorHandler")
@@ -48,7 +48,7 @@ public class KcServiceImpl implements KcService {
   private final RestClientExecutor restClient;
 
   public KcServiceImpl(
-      PeopleProperties properties,
+      IdentityProperties properties,
       AdminRestHeadersProvider headersProvider,
       @Qualifier("keycloakRestErrorHandler") RestErrorHandler errorHandler,
       RestClientExecutor restClient

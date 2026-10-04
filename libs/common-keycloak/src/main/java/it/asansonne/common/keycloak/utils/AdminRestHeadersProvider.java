@@ -2,7 +2,7 @@ package it.asansonne.common.keycloak.utils;
 
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import it.asansonne.common.keycloak.config.PeopleProperties;
+import it.asansonne.common.keycloak.config.IdentityProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class AdminRestHeadersProvider implements RestHeadersProvider {
 
-  private final PeopleProperties properties;
+  private final IdentityProperties properties;
 
   private final RestTemplate restTemplate;
 

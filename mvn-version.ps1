@@ -28,12 +28,12 @@ foreach ($path in $paths) {
 $servicePom = Join-Path $PSScriptRoot 'services/identity-service/pom.xml'
 $content = Get-Content -LiteralPath $servicePom -Raw -Encoding UTF8
 if ($content -notmatch '<platform.version>[^<]+</platform.version>') {
-    throw 'The People POM must declare platform.version.'
+    throw 'The Identity POM must declare platform.version.'
 }
 $content = [regex]::Replace($content, '<platform.version>[^<]+</platform.version>', "<platform.version>$Version</platform.version>")
 [xml]$validated = $content
 $changes[$servicePom] = $content
-if ($PSCmdlet.ShouldProcess("Platform reactor and People dependency ($($changes.Count) POMs)", "Set version $Version")) {
+if ($PSCmdlet.ShouldProcess("Platform reactor and Identity dependency ($($changes.Count) POMs)", "Set version $Version")) {
     foreach ($path in $changes.Keys) {
         [IO.File]::WriteAllText($path, $changes[$path], [Text.UTF8Encoding]::new($false))
     }
