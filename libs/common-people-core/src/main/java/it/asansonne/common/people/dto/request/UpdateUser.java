@@ -10,12 +10,12 @@ import lombok.Builder;
  */
 @Builder
 public record UpdateUser(
-    @Email(message = "email non valida")
+    @Email(message = "error.people.user.email.invalid")
     String email,
 
     @Pattern(
         regexp = "^\\+?\\d{6,13}$",
-        message = "phoneNumber non valido"
+        message = "error.people.user.phone.invalid"
     )
     String phoneNumber
 ) implements Update {

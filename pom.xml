@@ -12,15 +12,15 @@
 
     <groupId>it.asansonne</groupId>
     <artifactId>platform</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>tonino-platform</name>
     <description>tonino-platform - Parent POM</description>
 
-    <!-- ═══════════════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          MODULI
-         ═══════════════════════════════════════════════════════ -->
+         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <modules>
         <module>libs/common-core</module>
         <module>libs/common-rest</module>
@@ -32,9 +32,9 @@
         <module>libs/common-people-rest-jpa</module>
     </modules>
 
-    <!-- ═══════════════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          sviluppatori
-         ═══════════════════════════════════════════════════════ -->
+         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <developers>
         <developer>
             <id>asansonne</id>
@@ -48,9 +48,9 @@
         </developer>
     </developers>
 
-    <!-- ═══════════════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          PROPERTIES
-         ═══════════════════════════════════════════════════════ -->
+         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <properties>
         <java.version>25</java.version>
         <spring-framework.version>7.0.9</spring-framework.version>
@@ -68,16 +68,16 @@
         <logback.version>1.6.3</logback.version>
         <log4j2.version>2.26.1</log4j2.version>
         <project.groupId>it.asansonne</project.groupId>
-        <revision>1.0.0</revision>
+        <revision>1.2.0-SNAPSHOT</revision>
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
-    <!-- ═══════════════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          DIPENDENZE COMUNI A TUTTI I MODULI
-         Solo ciò che serve davvero a ogni singolo modulo.
-         ═══════════════════════════════════════════════════════ -->
+         Solo ciÃ² che serve davvero a ogni singolo modulo.
+         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <dependencies>
 
         <!-- Lombok: annotation processor, opzionale a runtime -->
@@ -96,15 +96,15 @@
 
     </dependencies>
 
-    <!-- ═══════════════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          DEPENDENCY MANAGEMENT
          Centralizza le versioni. I moduli figli dichiarano
          solo groupId + artifactId, senza version.
-         ═══════════════════════════════════════════════════════ -->
+         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <dependencyManagement>
         <dependencies>
 
-            <!-- ── Spring Cloud BOM ────────────────────────── -->
+            <!-- â”€â”€ Spring Cloud BOM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -113,7 +113,7 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- ── Moduli interni (BOM interno) ───────────── -->
+            <!-- â”€â”€ Moduli interni (BOM interno) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-core</artifactId>
@@ -145,14 +145,14 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- ── API Docs ───────────────────────────────── -->
+            <!-- â”€â”€ API Docs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
 
-            <!-- ── Mapping ────────────────────────────────── -->
+            <!-- â”€â”€ Mapping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
@@ -167,16 +167,16 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- ═══════════════════════════════════════════════════════
+    <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          BUILD
-         ═══════════════════════════════════════════════════════ -->
+         â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <build>
         <pluginManagement>
             <plugins>
 
                 <!-- spring-boot-maven-plugin: gestito qui ma attivato
                      solo nei moduli che producono un fat JAR (i services).
-                     Le libs lo ereditano ma non lo eseguono perché non
+                     Le libs lo ereditano ma non lo eseguono perchÃ© non
                      hanno una main class. -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
@@ -220,7 +220,15 @@
         </pluginManagement>
 
         <plugins>
-            <!-- Solo il compiler è attivo su tutti i moduli -->
+            <!-- Queue uploads until all modules have built and passed their tests. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <deployAtEnd>true</deployAtEnd>
+                </configuration>
+            </plugin>
+            <!-- Solo il compiler Ã¨ attivo su tutti i moduli -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

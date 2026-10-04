@@ -12,6 +12,7 @@ import it.asansonne.common.people.dto.request.FilterUser;
 import it.asansonne.common.people.dto.request.UpdateUser;
 import it.asansonne.common.people.dto.response.User;
 import it.asansonne.common.rest.controller.CrudController;
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
@@ -21,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @PreAuthorize("isAuthenticated()")
@@ -109,7 +111,7 @@ public interface PeopleController extends CrudController<CreateUser, UpdateUser,
   @ApiResponse(responseCode = "409", description = "user.create.response.409.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
-  User create(@Parameter(hidden = true) Principal principal, CreateUser request);
+  User create(@Parameter(hidden = true) Principal principal, @Valid @RequestBody CreateUser request);
 
   @Override
   @Operation(operationId = "peopleUpdateByUuid", summary = "user.update.by.uuid.summary", description = "common.operation.not.implemented.description")
@@ -117,7 +119,7 @@ public interface PeopleController extends CrudController<CreateUser, UpdateUser,
   void updateByUuid(
       @Parameter(hidden = true) Principal principal,
       @Parameter(description = "user.uuid.description", example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid,
-      UpdateUser request);
+      @Valid @RequestBody UpdateUser request);
 
   @Override
   @Operation(operationId = "peopleDeleteByUuid", summary = "user.delete.by.uuid.summary", description = "common.operation.not.implemented.description")

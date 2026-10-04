@@ -1,136 +1,86 @@
-name: tonino-platform
-
+# Combine with compose.dev.yml or compose.prod.yml and the matching --env-file.
+name: tonino-platform-${SPRING_PROFILES_ACTIVE:?Select dev or prod}
 services:
   people:
     build:
-      context: ./services/people
+      context: .
       dockerfile: Dockerfile
-      secrets:
-        - maven_settings
-
-    container_name: people
-
+      secrets: [maven_settings]
     environment:
-      # Spring
-      PROFILE: ${PROFILE}
-      SERVER_PORT: ${SERVER_PORT}
-
-      # PostgreSQL
-      DB_PEOPLE_USER: ${DB_PEOPLE_USER}
-      DB_PEOPLE_PASSWORD: ${DB_PEOPLE_PASSWORD}
-      DB_PEOPLE_NAME: ${DB_PEOPLE_NAME}
-
-      # Keycloak
-      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME}
-      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
-      KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID}
-      KC_ADMIN_CLIENT_SECRET: ${KC_ADMIN_CLIENT_SECRET}
-
-      # Override importanti per ambiente Docker
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:?Required}
+      SERVER_PORT: 8082
+      APPLICATION_URL: ${APPLICATION_URL:?Required}
       DB_HOST: postgres
       DB_PORT: 5432
-      KEYCLOAK_HOST: keycloak
-      KEYCLOAK_PORT: 8080
-
-    ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
-
-    depends_on:
-      - postgres
-      - keycloak
-
-    networks:
-      - backend-network
-
-  sonarqube:
-    image: sonarqube:community
-    container_name: sonarqube
-    restart: no
-    ports:
-      - "9000:9000"
-    environment:
-      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
-    volumes:
-      - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
-#    psw = Zoology0-Emphasize-Keenly
-
-  postgres:
-    image: postgres:17-alpine
-    container_name: postgres
-    restart: no
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_PORT}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ${DB_INIT_FOLDER}/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    networks:
-      - backend-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME:-postgres}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.5
-    container_name: keycloak
-    restart: no
-    command: start-dev --import-realm
-    environment:
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/${KC_DB_NAME}
-      KC_DB_USERNAME: ${KC_DB_USER}
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-
-      KC_HOSTNAME_STRICT: ${KC_HOSTNAME_STRICT:-false}
-      KC_HOSTNAME_STRICT_HTTPS: ${KC_HOSTNAME_STRICT_HTTPS:-false}
-      KC_HTTP_ENABLED: ${KC_HTTP_ENABLED:-true}
-      KC_PROXY_HEADERS: xforwarded
-
-      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:-people-realm}
-      PLATFORM_BACKEND_CLIENT_SECRET: ${PLATFORM_BACKEND_CLIENT_SECRET}
-
-    volumes:
-      - ${REALM_CONFIG_FOLDER}:/opt/keycloak/data/import:ro
-    ports:
-      - '5443:8080'
+      DB_PEOPLE_NAME: ${DB_PEOPLE_NAME:?Required}
+      DB_PEOPLE_USER: ${DB_PEOPLE_USER:?Required}
+      DB_PEOPLE_PASSWORD: ${DB_PEOPLE_PASSWORD:?Required}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:?Required}
+      APP_ID: ${APP_ID:-people}
+      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:-${APP_ID:-people}}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-${APP_ID:-people}-api}
+      KEYCLOAK_APP_CLIENT_ID: ${KEYCLOAK_APP_CLIENT_ID:-${APP_ID:-people}-fe}
+      KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID:-${APP_ID:-people}-be}
+      PLATFORM_BACKEND_CLIENT_SECRET: ${PLATFORM_BACKEND_CLIENT_SECRET:?Required}
+      APPLICATION_ISSUER_NGROK: ${APPLICATION_ISSUER_NGROK:-}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?Required}
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - backend-network
-      - frontend-network
-
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: mailpit
-
-    restart: no
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-
-networks:
-  frontend-network:
-    name: frontend-network
-    driver: bridge
-  backend-network:
-    name: backend-network
-    driver: bridge
-
+      keycloak:
+        condition: service_healthy
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:?Required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Required}
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      DB_PEOPLE_NAME: ${DB_PEOPLE_NAME:?Required}
+      DB_PEOPLE_USER: ${DB_PEOPLE_USER:?Required}
+      DB_PEOPLE_PASSWORD: ${DB_PEOPLE_PASSWORD:?Required}
+      KC_DB_NAME: ${KC_DB_NAME:?Required}
+      KC_DB_USER: ${KC_DB_USER:?Required}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?Required}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${KC_DB_NAME:?Required}
+      KC_DB_USERNAME: ${KC_DB_USER:?Required}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:?Required}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME:?Required}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Required}
+      KC_HOSTNAME: ${KEYCLOAK_URL:?Required}
+      KC_HEALTH_ENABLED: "true"
+      APP_ID: ${APP_ID:-people}
+      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:-${APP_ID:-people}}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-${APP_ID:-people}-api}
+      KEYCLOAK_APP_CLIENT_ID: ${KEYCLOAK_APP_CLIENT_ID:-${APP_ID:-people}-fe}
+      KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID:-${APP_ID:-people}-be}
+      PLATFORM_BACKEND_CLIENT_SECRET: ${PLATFORM_BACKEND_CLIENT_SECRET:?Required}
+      APPLICATION_URL: ${APPLICATION_URL:?Required}
+      FRONTEND_URL: ${FRONTEND_URL:-${APPLICATION_URL:?Required}}
+    volumes:
+      - ../keycloak/people.json:/opt/keycloak/data/import/${KEYCLOAK_REALM_NAME:-${APP_ID:-people}}-realm.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, bash, -ec, "exec 3<>/dev/tcp/127.0.0.1/9000; printf 'GET /health/ready HTTP/1.0\\r\\n\\r\\n' >&3; grep -q '200' <&3"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
 volumes:
-  sonarqube_data:
-  sonarqube_extensions:
   postgres_data:
-    driver: local
+secrets:
+  maven_settings:
+    file: ${MAVEN_SETTINGS_FILE:?Set the Maven settings.xml path}

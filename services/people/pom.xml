@@ -26,6 +26,7 @@
         <jackson-bom.version>3.2.3</jackson-bom.version>
         <tomcat.version>11.0.26</tomcat.version>
         <application.name>people-service</application.name>
+        <platform.version>1.2.0-SNAPSHOT</platform.version>
         <project.version>1.0.0</project.version>
         <logback.version>1.6.3</logback.version>
     </properties>
@@ -35,6 +36,9 @@
             <id>asansonne</id>
             <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/Tonio-D-San/tonino-platform</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -93,7 +97,7 @@
         <dependency>
             <groupId>it.asansonne</groupId>
             <artifactId>common-people-rest-jpa</artifactId>
-            <version>1.0.0</version>
+            <version>${platform.version}</version>
         </dependency>
 
     </dependencies>

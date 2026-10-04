@@ -1,8 +1,5 @@
 package it.asansonne.rest.jpa.peopleservice.csr.service.impl;
 
-import static it.asansonne.rest.jpa.peopleservice.csr.repository.specification.GroupSpecifications.descriptionLike;
-import static it.asansonne.rest.jpa.peopleservice.csr.repository.specification.GroupSpecifications.pathLike;
-import static it.asansonne.rest.jpa.peopleservice.csr.repository.specification.GroupSpecifications.roleLike;
 import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.GROUP_NOT_FOUND;
 
 import it.asansonne.common.core.exception.custom.NotFoundException;
@@ -25,23 +22,23 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GroupServiceImpl implements GroupService {
   private final GroupRepository repository;
-  private GroupSpecifications specifications;
+  private final GroupSpecifications specifications;
 
   @Override
   public GroupModel findByRole(Principal principal, String role) {
-    return repository.findByRole(roleLike(role).toString())
+    return repository.findByRole(role)
         .orElseThrow(() -> new NotFoundException(GROUP_NOT_FOUND.getCode()));
   }
 
   @Override
   public GroupModel findByPath(Principal principal, String path) {
-    return repository.findByPath(pathLike(path).toString())
+    return repository.findByPath(path)
         .orElseThrow(() -> new NotFoundException(GROUP_NOT_FOUND.getCode()));
   }
 
   @Override
   public GroupModel findByDescription(Principal principal, String description) {
-    return repository.findByDescription(descriptionLike(description).toString())
+    return repository.findByDescription(description)
         .orElseThrow(() -> new NotFoundException(GROUP_NOT_FOUND.getCode()));
   }
 

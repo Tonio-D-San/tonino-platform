@@ -12,6 +12,8 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.Collections;
+import it.asansonne.common.keycloak.config.PeopleProperties;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,16 +24,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class OpenApiConfiguration {
   private static final String SEC_SCHEME_OAUTH2 = "oauth2";
   @Value("${info.app.name}")
   private String appName;
   @Value("${application.host}")
   private String applicationHost;
-  @Value("${keycloak.host.base-url:${keycloak.host}}")
-  private String authServer;
-  @Value("${keycloak.realm.name}")
-  private String realm;
+  private final PeopleProperties properties;
 
   /**
    * Custom open api.
@@ -77,8 +77,7 @@ public class OpenApiConfiguration {
   }
 
   private String getAuthUrl() {
-    return String.format("%s/realms/%s/protocol/openid-connect",
-        this.authServer, this.realm);
+    return properties.keycloak().realmUrl() + "/protocol/openid-connect";
   }
 
 }

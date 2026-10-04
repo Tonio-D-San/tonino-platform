@@ -1,7 +1,9 @@
 package it.asansonne.rest.jpa.peopleservice.csr.component.impl;
 
-import static it.asansonne.common.core.enums.ErrorMessage.BAD_REQUEST;
+import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.EMAIL_DUPLICATE;
 import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.KEYCLOAK_DELETE_USER_ERROR;
+import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.USER_DATA_INTEGRITY;
+import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.USER_PHONE_REQUIRED;
 
 import it.asansonne.common.core.exception.custom.DataIntegrityException;
 import it.asansonne.common.keycloak.component.KcComponent;
@@ -98,7 +100,7 @@ public class UserComponentImpl implements UserComponent {
     } catch (DataIntegrityViolationException e) {
       kcComponent.deleteKcUser(userUuid);
       log.error("Errore durante la creazione dell'utente {}", userEmail, e);
-      throw new DataIntegrityException(BAD_REQUEST.getCode(), userEmail);
+      throw new DataIntegrityException(resolveUserIntegrityError(e), userEmail);
     }
   }
 
@@ -117,5 +119,19 @@ public class UserComponentImpl implements UserComponent {
 
   private UserModel findModelByUuid(Principal principal, UUID uuid) {
     return service.findByUuid(principal, uuid);
+  }
+
+  private String resolveUserIntegrityError(DataIntegrityViolationException exception) {
+    String message = exception.getMostSpecificCause().getMessage();
+    if (message == null) {
+      return USER_DATA_INTEGRITY.getCode();
+    }
+    if (message.contains("phone_number")) {
+      return USER_PHONE_REQUIRED.getCode();
+    }
+    if (message.contains("email")) {
+      return EMAIL_DUPLICATE.getCode();
+    }
+    return USER_DATA_INTEGRITY.getCode();
   }
 }

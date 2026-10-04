@@ -11,7 +11,7 @@ import lombok.Builder;
 @Builder
 public record CreateGroup(
 
-    @NotNull
+    @NotNull(message = "error.people.group.role.required")
     String role,
 
     UUID parentId,

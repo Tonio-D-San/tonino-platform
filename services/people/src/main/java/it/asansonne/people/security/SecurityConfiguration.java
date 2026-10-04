@@ -2,15 +2,17 @@ package it.asansonne.people.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.asansonne.common.core.handler.AuthorizationAuthenticationHandler;
+import it.asansonne.common.keycloak.config.PeopleProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpHeaders;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,12 +28,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -40,13 +43,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
   private final AuthorizationAuthenticationHandler handler;
-  private final ManageToken manageToken;
+  private final PeopleProperties properties;
 
   @Value("${api.base-path}")
   String apiBasePath;
-  @Value("${keycloak.host.realm:err-error}")
-  String localhostIssuer;
-  @Value("${application.issuer.ngrok:ngrok-error}")
+  @Value("${application.issuer.ngrok:}")
   String ngrokIssuer;
 
   @Bean
@@ -55,11 +56,12 @@ public class SecurityConfiguration {
   ) {
     log.info("Configuring security filter chain");
     return http
-        .addFilterBefore(manageToken, UsernamePasswordAuthenticationFilter.class)
         .cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
-        .oauth2ResourceServer(oauth2 -> oauth2
-            .authenticationManagerResolver(
+        .sessionManagement(session ->
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        ).oauth2ResourceServer(oauth2 ->
+            oauth2.authenticationManagerResolver(
                 multiIssuerAuthManagerResolver(authenticationConverter)
             )
         ).authorizeHttpRequests(requests -> requests
@@ -73,14 +75,11 @@ public class SecurityConfiguration {
                 "/actuator/info",
                 "/error"
             ).permitAll()
-            .requestMatchers(apiBasePath + "/**").authenticated()
-            .anyRequest().permitAll()
-        ).sessionManagement(session ->
-            {
-              session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-              session.maximumSessions(1).maxSessionsPreventsLogin(false);
-            }
-        ).exceptionHandling(exceptionHandling -> exceptionHandling
+            .requestMatchers(apiBasePath + "/**")
+            .authenticated()
+            .anyRequest()
+            .denyAll()
+        ).exceptionHandling(exception -> exception
             .authenticationEntryPoint(handler)
             .accessDeniedHandler(handler)
         ).build();
@@ -95,22 +94,25 @@ public class SecurityConfiguration {
     @Override
     public JwtAuthenticationToken convert(@NonNull Jwt jwt) {
       return new JwtAuthenticationToken(
-          jwt, Objects.requireNonNull(authoritiesConverter.convert(jwt)), Objects.requireNonNull(jwt.getSubject())
+          jwt, Objects.requireNonNull(authoritiesConverter.convert(jwt)),
+          Objects.requireNonNull(jwt.getSubject())
       );
     }
 
     @Component
+    @RequiredArgsConstructor
     static class KeycloakAuthoritiesConverter
         implements Converter<Jwt, List<SimpleGrantedAuthority>> {
-      @Value("${keycloak.client.id:${keycloak.client-id}}")
-      private String clientId;
+      private final PeopleProperties properties;
 
       @Override
       @SuppressWarnings({"unchecked"})
       public List<SimpleGrantedAuthority> convert(@NonNull Jwt jwt) {
         final var realmAccess = (Map<String, Object>) jwt.getClaims()
             .getOrDefault("resource_access", Map.of());
-        final var client = (Map<String, Object>) realmAccess.getOrDefault(clientId, Map.of());
+        final var client =
+            (Map<String, Object>) realmAccess.getOrDefault(properties.keycloak().apiClientId(),
+                Map.of());
         final var roles = (List<String>) client
             .getOrDefault("roles", List.of());
         final List<String> prefixRoles = roles.stream().map(s -> "ROLE_" + s).toList();
@@ -131,32 +133,33 @@ public class SecurityConfiguration {
       KeycloakAuthenticationConverter authenticationConverter
   ) {
     Map<String, AuthenticationManager> managers = new ConcurrentHashMap<>();
-    var trustedIssuers = Set.of(
-        localhostIssuer, ngrokIssuer
-    );
-
+    var trustedIssuers = new HashSet<String>();
+    trustedIssuers.add(properties.keycloak().realmUrl());
+    if (ngrokIssuer != null && !ngrokIssuer.isBlank()) {
+      trustedIssuers.add(ngrokIssuer);
+    }
     return request -> authentication -> {
-      log.info("Request: {}", request);
+      log.debug("Authenticating request {} {}", request.getMethod(), request.getRequestURI());
       String token = extractBearer(request);
       if (token == null) {
         throw new BadCredentialsException("Missing Bearer token");
       }
-
       String issuer = extractIssuerUnverified(token);
       if (issuer == null) {
         throw new BadCredentialsException("Missing iss claim");
       }
-
       if (!trustedIssuers.contains(issuer)) {
         throw new BadCredentialsException("Untrusted issuer: " + issuer);
       }
-
       return managers.computeIfAbsent(
           issuer,
           iss -> {
-            JwtAuthenticationProvider provider = new JwtAuthenticationProvider(
-                JwtDecoders.fromIssuerLocation(iss)
-            );
+            NimbusJwtDecoder decoder = JwtDecoders.fromIssuerLocation(iss);
+            decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+                JwtValidators.createDefaultWithIssuer(iss),
+                new AudienceValidator(properties.keycloak().apiClientId())
+            ));
+            JwtAuthenticationProvider provider = new JwtAuthenticationProvider(decoder);
             provider.setJwtAuthenticationConverter(authenticationConverter);
             return provider::authenticate;
           }

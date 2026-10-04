@@ -1,6 +1,7 @@
 package it.asansonne.rest.jpa.peopleservice.csr.component.impl;
 
-import static it.asansonne.common.core.enums.ErrorMessage.BAD_REQUEST;
+import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.GROUP_DATA_INTEGRITY;
+import static it.asansonne.rest.jpa.peopleservice.enums.ErrorMessage.GROUP_ROLE_DUPLICATE;
 
 import it.asansonne.common.core.exception.custom.DataIntegrityException;
 import it.asansonne.common.keycloak.component.KcComponent;
@@ -38,23 +39,8 @@ public class GroupComponentImpl implements GroupComponent {
   private final KcComponent kcComponent;
 
   @Override
-  public Group findByRole(Principal principal, String name) {
-    return null;
-  }
-
-  @Override
-  public Group findByPath(Principal principal, String path) {
-    return null;
-  }
-
-  @Override
-  public Group findByDescription(Principal principal, String description) {
-    return null;
-  }
-
-  @Override
   public Boolean deleteByUuid(Principal principal, UUID uuid) {
-    if(Boolean.TRUE.equals(kcComponent.deleteKcGroup(uuid))) {
+    if (Boolean.TRUE.equals(kcComponent.deleteKcGroup(uuid))) {
       return service.deleteByUuid(principal, this.service.findByUuid(principal, uuid));
     }
     return false;
@@ -82,12 +68,13 @@ public class GroupComponentImpl implements GroupComponent {
 
   @Override
   public Group create(Principal principal, CreateGroup request) {
-    String description = request.description() == null ? "" : request.description();
     KcGroup kcGroup = kcComponent.createKcGroup(CreateKcGroup.builder()
         .name(request.role())
         .parentId(request.parentId())
-        .attributes(Map.of(KcGroup.DESCRIPTION, List.of(description)))
-        .build()
+        .attributes(Map.of(
+            KcGroup.DESCRIPTION,
+            List.of(request.description() == null ? "" : request.description())
+        )).build()
     );
     UUID groupUuid = kcGroup.id();
     String groupName = kcGroup.name();
@@ -103,8 +90,19 @@ public class GroupComponentImpl implements GroupComponent {
     } catch (DataIntegrityViolationException e) {
       kcComponent.deleteKcGroup(groupUuid);
       log.error("Errore durante la creazione del gruppo {}", groupName, e);
-      throw new DataIntegrityException(BAD_REQUEST.getCode(), groupName);
+      throw new DataIntegrityException(resolveGroupIntegrityError(e), groupName);
     }
   }
-  
+
+  private String resolveGroupIntegrityError(DataIntegrityViolationException exception) {
+    String message = exception.getMostSpecificCause().getMessage();
+    if (message == null) {
+      return GROUP_DATA_INTEGRITY.getCode();
+    }
+    if (message.contains("role")) {
+      return GROUP_ROLE_DUPLICATE.getCode();
+    }
+    return GROUP_DATA_INTEGRITY.getCode();
+  }
+
 }

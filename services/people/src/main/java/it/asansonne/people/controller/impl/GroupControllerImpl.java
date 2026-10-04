@@ -1,6 +1,5 @@
 package it.asansonne.people.controller.impl;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import it.asansonne.common.people.dto.request.CreateGroup;
 import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.common.people.dto.request.UpdateGroup;

@@ -1,5 +1,10 @@
 package it.asansonne.common.graphql.jpa.kc.csr.repository.specification;
 
+import static it.asansonne.common.core.enums.ErrorMessage.FILTER_ERROR;
+
+import it.asansonne.common.core.exception.custom.BadRequestException;
+import java.util.Locale;
+import java.util.UUID;
 import it.asansonne.common.jpa.repository.specification.ModelSpecifications;
 import it.asansonne.common.jpa.util.SpecificationUtils;
 import it.asansonne.common.people.dto.request.FilterGroup;
@@ -26,20 +31,30 @@ public final class GroupSpecifications implements ModelSpecifications<GroupModel
   @Override
   public Specification<GroupModel> withFilter(FilterGroup filter) {
     return Specification.allOf(
-        SpecificationUtils.hasUuid(filter.uuid()),
+        uuidLike(filter.uuid()),
         SpecificationUtils.isActive(filter.isActive()),
         nameLike(filter.role()),
-        pathLike(filter.path()), //TODO: cercare per role e non per path
+        pathLike(filter.path()),
         descriptionLike(filter.description())
     );
   }
 
-  /**
-   * Name like specification.
-   *
-   * @param name the name
-   * @return the specification
-   */
+  public static Specification<GroupModel> uuidLike(String uuid) {
+    return (root, _, cb) -> {
+      if (!SpecificationUtils.hasText(uuid)) {
+        return null;
+      }
+      String normalized = SpecificationUtils.normalizeOrNull("uuid", uuid);
+      if (normalized == null) {
+        throw new BadRequestException(FILTER_ERROR.getCode(), SpecificationUtils.MIN_SEARCH_LENGTH);
+      }
+      return cb.like(
+          cb.lower(root.<UUID>get("uuid").cast(String.class)),
+          "%" + normalized.toLowerCase(Locale.ROOT) + "%"
+      );
+    };
+  }
+
   public static Specification<GroupModel> nameLike(String name) {
     return SpecificationUtils.likeIgnoringShortValue("name", name);
   }

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.util.UUID;
 import lombok.Builder;
 
 /**
@@ -14,28 +13,28 @@ import lombok.Builder;
  */
 @Builder
 public record CreateUser(
-    @NotBlank
-    @Size(max = 255, message = "name troppo lungo")
+    @NotBlank(message = "error.people.user.name.required")
+    @Size(max = 255, message = "error.people.user.name.size")
     String name,
 
-    @NotBlank
-    @Size(max = 255, message = "surname troppo lungo")
+    @NotBlank(message = "error.people.user.surname.required")
+    @Size(max = 255, message = "error.people.user.surname.size")
     String surname,
 
-    @NotBlank
-    @Email(message = "email non valida")
+    @NotBlank(message = "error.people.user.email.required")
+    @Email(message = "error.people.user.email.invalid")
     String email,
 
     String pswTemp,
 
-    @NotBlank
+    @NotBlank(message = "error.people.user.phone.required")
     @Pattern(
         regexp = "^\\+?\\d{6,13}$",
-        message = "phoneNumber non valido"
+        message = "error.people.user.phone.invalid"
     )
     String phoneNumber,
 
-    @NotNull
+    @NotNull(message = "error.people.user.role.required")
     String role
 ) implements Create {
 }

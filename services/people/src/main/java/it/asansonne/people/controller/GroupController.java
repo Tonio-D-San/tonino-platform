@@ -12,6 +12,7 @@ import it.asansonne.common.people.dto.request.FilterGroup;
 import it.asansonne.common.people.dto.request.UpdateGroup;
 import it.asansonne.common.people.dto.response.Group;
 import it.asansonne.common.rest.controller.CrudController;
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.UUID;
 import org.springdoc.core.annotations.ParameterObject;
@@ -64,13 +65,13 @@ public interface GroupController extends CrudController<CreateGroup, UpdateGroup
   @ApiResponse(responseCode = "409", description = "group.create.response.409.description",
       content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
           schema = @Schema(implementation = ExceptionMessage.class)))
-  Group create(@Parameter(hidden = true) Principal principal, @RequestBody CreateGroup request);
+  Group create(@Parameter(hidden = true) Principal principal, @Valid @RequestBody CreateGroup request);
 
   @Override
   @Operation(operationId = "groupUpdateByUuid", summary = "group.update.by.uuid.summary", description = "common.operation.not.implemented.description")
   @ApiResponse(responseCode = "200", description = "group.update.by.uuid.response.200.description", content = @Content)
   void updateByUuid(@Parameter(hidden = true) Principal principal, @Parameter(description = "group.uuid.description",
-          example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid, UpdateGroup request);
+          example = "08fba211-60ca-45fc-b809-86bc2ad81dca") UUID uuid, @Valid @RequestBody UpdateGroup request);
 
   @Override
   @Operation(operationId = "groupDeleteByUuid", summary = "group.delete.by.uuid.summary", description = "common.operation.not.implemented.description")
