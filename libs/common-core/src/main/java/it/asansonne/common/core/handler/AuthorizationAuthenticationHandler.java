@@ -37,9 +37,7 @@ public class AuthorizationAuthenticationHandler
   public void handle(HttpServletRequest request, @NonNull HttpServletResponse response,
                      @NonNull AccessDeniedException accessDeniedException)
       throws IOException {
-
     String acceptHeader = request.getHeader("Accept");
-
     if (acceptHeader != null && acceptHeader.contains(APPLICATION_JSON)) {
       response.setStatus(HttpServletResponse.SC_FORBIDDEN);
       response.setContentType(APPLICATION_JSON);
@@ -57,9 +55,7 @@ public class AuthorizationAuthenticationHandler
   @ExceptionHandler(AuthenticationException.class)
   public void commence(HttpServletRequest request, @NonNull HttpServletResponse response,
                        @NonNull AuthenticationException authException) throws IOException {
-
     String acceptHeader = request.getHeader("Accept");
-
     if (acceptHeader != null && acceptHeader.contains(APPLICATION_JSON)) {
       response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
       response.setContentType(APPLICATION_JSON);

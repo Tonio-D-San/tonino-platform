@@ -30,16 +30,14 @@ public class GroupControllerImpl implements GroupController {
   @Override
   public Page<Group> findByIsActive(Principal principal, Boolean isActive, Integer page,
                                     Integer size, String direction) {
-    return component.findByIsActive(
-        principal, PageRequest.of(
-            page == null ? 0 : page,
-            size == null ? 20 : size,
-            Sort.by(
-                Sort.Direction.fromString(
-                    direction == null || direction.isBlank() ? "ASC" : direction
-                ), UPDATED_AT
-            )
-        ), isActive);
+    return component.findByIsActive(principal, PageRequest.of(
+        page == null ? 0 : page,
+        size == null ? 20 : size,
+        Sort.by(
+            Sort.Direction.fromString(direction == null || direction.isBlank() ? "ASC" : direction),
+            UPDATED_AT
+        )
+    ), isActive);
   }
 
   @Override

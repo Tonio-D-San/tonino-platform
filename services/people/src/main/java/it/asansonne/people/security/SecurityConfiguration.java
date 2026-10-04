@@ -115,14 +115,13 @@ public class SecurityConfiguration {
                 Map.of());
         final var roles = (List<String>) client
             .getOrDefault("roles", List.of());
-        final List<String> prefixRoles = roles.stream().map(s -> "ROLE_" + s).toList();
         final String clientScope = (String) jwt.getClaims()
             .getOrDefault("scope", "");
-        final List<String> prefixScope = Arrays.stream(clientScope.split(" "))
-            .map(s -> "SCOPE_" + s).toList();
         List<String> authorities = new ArrayList<>();
-        authorities.addAll(prefixRoles);
-        authorities.addAll(prefixScope);
+        authorities.addAll(roles.stream().map(s -> "ROLE_" + s).toList());
+        authorities.addAll(
+            Arrays.stream(clientScope.split(" ")).map(s -> "SCOPE_" + s).toList()
+        );
         return authorities.stream().map(SimpleGrantedAuthority::new).toList();
       }
     }
