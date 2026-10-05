@@ -7,18 +7,23 @@ Configurazione minima per l'integrazione Keycloak:
 ```properties
 identity.app-id=gestionale
 identity.keycloak.base-url=https://auth.example.com
+identity.keycloak.realm=tonino-platform
+identity.keycloak.api-client-id=gestionale-api
+identity.keycloak.admin-client-id=gestionale-admin
+identity.keycloak.frontend-client-id=gestionale-web
 identity.keycloak.admin-client-secret=${IDENTITY_ADMIN_SECRET}
 ```
 
-I default sono realm `gestionale`, client API `gestionale-api`, backend `gestionale-be`, frontend `gestionale-fe`. L'identificativo deve iniziare con una lettera minuscola e contenere solo lettere minuscole, cifre e trattini. URL e secret sono obbligatori. La configurazione viene verificata all'avvio.
+Realm, client API, client amministrativo e client frontend devono essere espliciti. `identity.app-id` identifica l'applicazione ospitante, ma non genera nomi Keycloak. URL, realm, client e secret sono obbligatori. La configurazione viene verificata all'avvio.
 
-Per un realm esistente si possono sovrascrivere singolarmente:
+Esempio per Identity Service:
 
 ```properties
-identity.keycloak.realm=realm-condiviso
-identity.keycloak.api-client-id=api-esistente
-identity.keycloak.admin-client-id=service-account-esistente
-identity.keycloak.frontend-client-id=frontend-esistente
+identity.app-id=identity-service
+identity.keycloak.realm=tonino-platform
+identity.keycloak.api-client-id=identity-api
+identity.keycloak.admin-client-id=identity-admin
+identity.keycloak.frontend-client-id=identity-swagger
 ```
 
 | Proprieta' | Variabile usata dal Compose e dai default della libreria |
@@ -29,7 +34,7 @@ identity.keycloak.frontend-client-id=frontend-esistente
 | identity.keycloak.api-client-id | KEYCLOAK_CLIENT_ID |
 | identity.keycloak.admin-client-id | KC_ADMIN_CLIENT_ID |
 | identity.keycloak.frontend-client-id | KEYCLOAK_APP_CLIENT_ID |
-| identity.keycloak.admin-client-secret | PLATFORM_BACKEND_CLIENT_SECRET |
+| identity.keycloak.admin-client-secret | KC_ADMIN_CLIENT_SECRET |
 
 Le proprieta' esplicite dell'applicazione prevalgono sui default della libreria. I nomi `keycloak.host.*`, `keycloak.client.id` e `keycloak.admin.*` non sono piu' letti dai componenti aggiornati: migrare al namespace `identity.*`. Gli env gia' usati dal Compose restano supportati.
 

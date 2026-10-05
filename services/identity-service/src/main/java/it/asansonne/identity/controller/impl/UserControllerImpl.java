@@ -4,7 +4,7 @@ import it.asansonne.common.identity.dto.request.CreateUser;
 import it.asansonne.common.identity.dto.request.FilterUser;
 import it.asansonne.common.identity.dto.request.UpdateUser;
 import it.asansonne.common.identity.dto.response.User;
-import it.asansonne.identity.controller.IdentityController;
+import it.asansonne.identity.controller.UserController;
 import it.asansonne.rest.jpa.identityservice.csr.component.UserComponent;
 import java.security.Principal;
 import java.util.UUID;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("${api.base-path}${api.resource.identity}")
+@RequestMapping("${api.base-path}${api.resource.users}")
 @AllArgsConstructor
-public class IdentityControllerImpl implements IdentityController {
+public class UserControllerImpl implements UserController {
   private final UserComponent component;
 
   @Override

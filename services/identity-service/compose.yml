@@ -16,12 +16,12 @@ services:
       DB_IDENTITY_USER: ${DB_IDENTITY_USER:?Required}
       DB_IDENTITY_PASSWORD: ${DB_IDENTITY_PASSWORD:?Required}
       KEYCLOAK_URL: ${KEYCLOAK_URL:?Required}
-      APP_ID: ${APP_ID:-identity}
-      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:-${APP_ID:-identity}}
-      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-${APP_ID:-identity}-api}
-      KEYCLOAK_APP_CLIENT_ID: ${KEYCLOAK_APP_CLIENT_ID:-${APP_ID:-identity}-fe}
-      KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID:-${APP_ID:-identity}-be}
-      PLATFORM_BACKEND_CLIENT_SECRET: ${PLATFORM_BACKEND_CLIENT_SECRET:?Required}
+      APP_ID: ${APP_ID:-identity-service}
+      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:?Required}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:?Required}
+      KEYCLOAK_APP_CLIENT_ID: ${KEYCLOAK_APP_CLIENT_ID:?Required}
+      KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID:?Required}
+      KC_ADMIN_CLIENT_SECRET: ${KC_ADMIN_CLIENT_SECRET:?Required}
       APPLICATION_ISSUER_NGROK: ${APPLICATION_ISSUER_NGROK:-}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?Required}
     depends_on:
@@ -60,16 +60,16 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD:?Required}
       KC_HOSTNAME: ${KEYCLOAK_URL:?Required}
       KC_HEALTH_ENABLED: "true"
-      APP_ID: ${APP_ID:-identity}
-      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:-${APP_ID:-identity}}
-      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:-${APP_ID:-identity}-api}
-      KEYCLOAK_APP_CLIENT_ID: ${KEYCLOAK_APP_CLIENT_ID:-${APP_ID:-identity}-fe}
-      KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID:-${APP_ID:-identity}-be}
-      PLATFORM_BACKEND_CLIENT_SECRET: ${PLATFORM_BACKEND_CLIENT_SECRET:?Required}
+      APP_ID: ${APP_ID:-identity-service}
+      KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:?Required}
+      KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:?Required}
+      KEYCLOAK_APP_CLIENT_ID: ${KEYCLOAK_APP_CLIENT_ID:?Required}
+      KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID:?Required}
+      KC_ADMIN_CLIENT_SECRET: ${KC_ADMIN_CLIENT_SECRET:?Required}
       APPLICATION_URL: ${APPLICATION_URL:?Required}
       FRONTEND_URL: ${FRONTEND_URL:-${APPLICATION_URL:?Required}}
     volumes:
-      - ../keycloak/identity-service.json:/opt/keycloak/data/import/${KEYCLOAK_REALM_NAME:-${APP_ID:-identity}}-realm.json:ro
+      - ../keycloak/identity-service.json:/opt/keycloak/data/import/${KEYCLOAK_REALM_NAME:?Required}-realm.json:ro
     depends_on:
       postgres:
         condition: service_healthy

@@ -15,7 +15,7 @@
   ],
   "clientScopes": [
     {
-      "name": "${APP_ID}-api-audience",
+      "name": "${KEYCLOAK_CLIENT_ID}-audience",
       "description": "Adds ${KEYCLOAK_CLIENT_ID} to access-token audiences",
       "protocol": "openid-connect",
       "attributes": {
@@ -24,7 +24,7 @@
       },
       "protocolMappers": [
         {
-          "name": "${APP_ID}-api-audience",
+          "name": "${KEYCLOAK_CLIENT_ID}-audience",
           "protocol": "openid-connect",
           "protocolMapper": "oidc-audience-mapper",
           "consentRequired": false,
@@ -47,7 +47,7 @@
       "enabled": true,
       "protocol": "openid-connect",
       "clientAuthenticatorType": "client-secret",
-      "secret": "${PLATFORM_BACKEND_CLIENT_SECRET}",
+      "secret": "${KC_ADMIN_CLIENT_SECRET}",
       "publicClient": false,
       "bearerOnly": false,
       "standardFlowEnabled": false,
@@ -55,7 +55,7 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
       "fullScopeAllowed": true,
-      "defaultClientScopes": ["${APP_ID}-api-audience"]
+      "defaultClientScopes": ["${KEYCLOAK_CLIENT_ID}-audience"]
     },
     {
       "clientId": "${KEYCLOAK_CLIENT_ID}",
@@ -87,7 +87,7 @@
       "attributes": {
         "pkce.code.challenge.method": "S256"
       },
-      "defaultClientScopes": ["${APP_ID}-api-audience"],
+      "defaultClientScopes": ["${KEYCLOAK_CLIENT_ID}-audience"],
       "protocolMappers": [
         {
           "name": "platform-groups",
