@@ -1,9 +1,9 @@
 package it.asansonne.identity.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.asansonne.common.core.handler.AuthorizationAuthenticationHandler;
 import it.asansonne.common.keycloak.config.KeycloakClientProperties;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -30,7 +30,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
@@ -42,7 +41,6 @@ import org.springframework.stereotype.Component;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-  private final AuthorizationAuthenticationHandler handler;
   private final KeycloakClientProperties properties;
 
   @Value("${api.base-path}")
@@ -58,6 +56,8 @@ public class SecurityConfiguration {
     return http
         .cors(Customizer.withDefaults())
         .csrf(AbstractHttpConfigurer::disable)
+        .formLogin(AbstractHttpConfigurer::disable)
+        .httpBasic(AbstractHttpConfigurer::disable)
         .sessionManagement(session ->
             session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ).oauth2ResourceServer(oauth2 ->
@@ -80,8 +80,12 @@ public class SecurityConfiguration {
             .anyRequest()
             .denyAll()
         ).exceptionHandling(exception -> exception
-            .authenticationEntryPoint(handler)
-            .accessDeniedHandler(handler)
+            .authenticationEntryPoint((_, response, _) ->
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+            )
+            .accessDeniedHandler((_, response, _) ->
+                response.sendError(HttpServletResponse.SC_FORBIDDEN)
+            )
         ).build();
   }
 
@@ -152,7 +156,9 @@ public class SecurityConfiguration {
       return managers.computeIfAbsent(
           issuer,
           iss -> {
-            NimbusJwtDecoder decoder = JwtDecoders.fromIssuerLocation(iss);
+            NimbusJwtDecoder decoder = NimbusJwtDecoder
+                .withJwkSetUri(jwkSetUri())
+                .build();
             decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 JwtValidators.createDefaultWithIssuer(iss),
                 new AudienceValidator(properties.apiClientId())
@@ -163,6 +169,10 @@ public class SecurityConfiguration {
           }
       ).authenticate(authentication);
     };
+  }
+
+  private String jwkSetUri() {
+    return properties.internalRealmUrl() + "/protocol/openid-connect/certs";
   }
 
   private static String extractBearer(HttpServletRequest request) {

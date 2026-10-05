@@ -40,7 +40,7 @@ public interface GetController<F extends Filter, S extends Dto> {
       @RequestParam(defaultValue = DEFAULT_DIRECTION) String direction
   );
 
-  @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
   Page<S> findAll(
       Principal principal,
       @ModelAttribute F filter,
