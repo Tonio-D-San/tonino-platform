@@ -65,6 +65,7 @@ services:
       KEYCLOAK_REALM_NAME: ${KEYCLOAK_REALM_NAME:?Required}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID:?Required}
       KEYCLOAK_APP_CLIENT_ID: ${KEYCLOAK_APP_CLIENT_ID:?Required}
+      KEYCLOAK_CONSOLE_CLIENT_ID: ${KEYCLOAK_CONSOLE_CLIENT_ID:?Required}
       KC_ADMIN_CLIENT_ID: ${KC_ADMIN_CLIENT_ID:?Required}
       KC_ADMIN_CLIENT_SECRET: ${KC_ADMIN_CLIENT_SECRET:?Required}
       APPLICATION_URL: ${APPLICATION_URL:?Required}
@@ -85,3 +86,5 @@ volumes:
 secrets:
   maven_settings:
     file: ${MAVEN_SETTINGS_FILE:?Set the Maven settings.xml path}
+
+

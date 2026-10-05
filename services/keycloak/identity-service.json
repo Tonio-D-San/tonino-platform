@@ -72,10 +72,8 @@
     },
     {
       "clientId": "${KEYCLOAK_APP_CLIENT_ID}",
-      "name": "${APP_ID} Frontend",
-      "redirectUris": ["${APPLICATION_URL}/swagger-ui/oauth2-redirect.html", "${APPLICATION_URL}/login/oauth2/code/keycloak", "${FRONTEND_URL}/*"],
-      "webOrigins": ["${APPLICATION_URL}", "${FRONTEND_URL}"],
-      "description": "Public client for Platform Web and Mobile",
+      "name": "${APP_ID} Swagger",
+      "description": "Public client for Swagger UI development login",
       "enabled": true,
       "protocol": "openid-connect",
       "publicClient": true,
@@ -84,6 +82,52 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "${APPLICATION_URL}/swagger-ui/oauth2-redirect.html",
+        "${APPLICATION_URL}/login/oauth2/code/keycloak"
+      ],
+      "webOrigins": [
+        "${APPLICATION_URL}"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256"
+      },
+      "defaultClientScopes": ["${KEYCLOAK_CLIENT_ID}-audience"],
+      "protocolMappers": [
+        {
+          "name": "platform-groups",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-group-membership-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "groups",
+            "full.path": "true",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "${KEYCLOAK_CONSOLE_CLIENT_ID}",
+      "name": "${APP_ID} Console",
+      "description": "Public client for the Identity web console",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "${FRONTEND_URL}/*"
+      ],
+      "webOrigins": [
+        "${FRONTEND_URL}"
+      ],
       "attributes": {
         "pkce.code.challenge.method": "S256"
       },
@@ -119,3 +163,4 @@
     }
   ]
 }
+
