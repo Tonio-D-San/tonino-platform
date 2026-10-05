@@ -26,7 +26,7 @@ Per eseguire Identity Service dall'IDE avviare soltanto `postgres keycloak mailp
 
 Compilare `.env.prod` con domini HTTPS reali al posto di example.com e credenziali adeguate. L'override presume un reverse proxy sull'host: Identity Service e Keycloak pubblicano porte soltanto su loopback; PostgreSQL non pubblica porte. Il dominio pubblico di Keycloak deve essere raggiungibile anche dal container Identity Service, per discovery, validazione JWT e chiamate amministrative.
 
-Il profilo `prod` valida lo schema senza modificarlo: predisporre le tabelle con il processo di migrazione prima di avviare Identity su un database nuovo. In questo repository non e' ancora configurato un migratore automatico. Swagger e dettagli health sono disabilitati; Keycloak usa `start`, con TLS terminato dal proxy e header X-Forwarded impostati dal proxy.
+Il profilo `prod` applica le migration Flyway e poi Hibernate valida lo schema senza modificarlo. Swagger e dettagli health sono disabilitati; Keycloak usa `start`, con TLS terminato dal proxy e header X-Forwarded impostati dal proxy.
 
 ## Dati e autenticazione
 
