@@ -10,7 +10,7 @@ Per produzione sostituire entrambe le occorrenze di `dev` con `prod`.
 `--env-file` serve a Compose per interpolare le variabili; il container riceve quelle dichiarate in `environment`.
 Gli env locali sono ignorati da Git. `.env.template` documenta le variabili e va compilato con le credenziali.
 `MAVEN_SETTINGS_FILE` deve indicare un settings.xml esistente con accesso al repository Maven GitHub Packages.
-La build Docker usa soltanto Identity Service come contesto. Maven scarica le librerie pubblicate su GitHub Packages usando il repository dichiarato nel POM e le credenziali del secret `maven_settings`. Prima di costruire il servizio con le nuove proprieta' `identity.*`, pubblicare le librerie aggiornate e allineare le versioni delle dipendenze nel POM: le modifiche ai sorgenti locali delle librerie non vengono incluse nell'immagine.
+La build Docker usa soltanto Identity Service come contesto. Maven scarica le librerie pubblicate su GitHub Packages usando il repository dichiarato nel POM e le credenziali del secret `maven_settings`. Prima di costruire il servizio con le nuove proprieta' `keycloak.client.*`, pubblicare le librerie aggiornate e allineare le versioni delle dipendenze nel POM: le modifiche ai sorgenti locali delle librerie non vengono incluse nell'immagine.
 
 ## Sviluppo
 
@@ -34,7 +34,7 @@ I progetti Compose `tonino-platform-dev` e `tonino-platform-prod` hanno volumi s
 
 `services/db/init-db.sh` crea soltanto i database applicativo e Keycloak usando le variabili dell'ambiente. Viene eseguito solo su un volume PostgreSQL vuoto. Il precedente `init-db.sql` resta disponibile ma non viene piu' montato. Cambiare un env non aggiorna password o ruoli in database gia' inizializzati.
 
-Il realm Keycloak e i client sono espliciti. Per la piattaforma usare `KEYCLOAK_REALM_NAME=tonino-platform`, `KEYCLOAK_CLIENT_ID=identity-api`, `KEYCLOAK_APP_CLIENT_ID=identity-swagger` e `KC_ADMIN_CLIENT_ID=identity-admin`. `APP_ID=identity-service` identifica il servizio, ma non genera nomi Keycloak. `KC_ADMIN_CLIENT_SECRET` e' condiviso tra l'import del realm e Identity. I redirect del client Swagger sono derivati da `APPLICATION_URL`, senza slash finale. Per un frontend separato impostare anche `FRONTEND_URL` e aggiungere la sua origine a `CORS_ALLOWED_ORIGINS`. L'import non sovrascrive un realm esistente: usare il comando di setup descritto in [../keycloak/README.md](../keycloak/README.md).
+Il realm Keycloak e i client sono espliciti. Per la piattaforma usare `KEYCLOAK_PUBLIC_URL`, `KEYCLOAK_INTERNAL_URL`, `KEYCLOAK_REALM_NAME=tonino-platform`, `KEYCLOAK_CLIENT_ID=identity-api`, `KEYCLOAK_APP_CLIENT_ID=identity-swagger` e `KC_ADMIN_CLIENT_ID=identity-admin`. `APP_ID=identity-service` identifica il servizio, ma non genera nomi Keycloak. `KC_ADMIN_CLIENT_SECRET` e' condiviso tra l'import del realm e Identity. I redirect del client Swagger sono derivati da `APPLICATION_URL`, senza slash finale. Per un frontend separato impostare anche `FRONTEND_URL` e aggiungere la sua origine a `CORS_ALLOWED_ORIGINS`. L'import non sovrascrive un realm esistente: usare il comando di setup descritto in [../keycloak/README.md](../keycloak/README.md).
 
 `APPLICATION_ISSUER_NGROK` e' opzionale: valori vuoti e duplicati vengono ignorati dal resolver multi-issuer.
 

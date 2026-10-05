@@ -25,9 +25,9 @@ Se `public-url` o `internal-url` non sono valorizzati, la libreria usa `base-url
 Esempio di mapping nel servizio ospitante:
 
 ```properties
-keycloak.client.base-url=${KEYCLOAK_URL}
-keycloak.client.public-url=${KEYCLOAK_PUBLIC_URL:${KEYCLOAK_URL}}
-keycloak.client.internal-url=${KEYCLOAK_INTERNAL_URL:${KEYCLOAK_URL}}
+keycloak.client.base-url=${KEYCLOAK_PUBLIC_URL}
+keycloak.client.public-url=${KEYCLOAK_PUBLIC_URL}
+keycloak.client.internal-url=${KEYCLOAK_INTERNAL_URL:${KEYCLOAK_PUBLIC_URL}}
 keycloak.client.realm=${KEYCLOAK_REALM_NAME}
 keycloak.client.api-client-id=${KEYCLOAK_CLIENT_ID}
 keycloak.client.admin-client-id=${KC_ADMIN_CLIENT_ID}
