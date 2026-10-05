@@ -1,45 +1,42 @@
-# Identity come modulo riutilizzabile
+# Keycloak client riutilizzabile
 
-Un'applicazione puo' aggiungere `it.asansonne:common-identity-rest-jpa:1.1.0` alle dipendenze Maven. Il modulo include `common-keycloak` e registra componenti, servizi, entita' e repository tramite le autoconfigurazioni esistenti. Le nuove proprieta' vengono caricate dalla libreria, senza copiare l'application.properties del servizio Identity.
+Un'applicazione puo' aggiungere `it.asansonne:common-keycloak:1.1.0` alle dipendenze Maven. Il modulo registra componenti e servizi Keycloak tramite autoconfigurazione, ma non carica default applicativi e non assume nomi di servizi, realm o variabili d'ambiente.
 
 Configurazione minima per l'integrazione Keycloak:
 
 ```properties
-identity.app-id=gestionale
-identity.keycloak.base-url=https://auth.example.com
-identity.keycloak.realm=tonino-platform
-identity.keycloak.api-client-id=gestionale-api
-identity.keycloak.admin-client-id=gestionale-admin
-identity.keycloak.frontend-client-id=gestionale-web
-identity.keycloak.admin-client-secret=${IDENTITY_ADMIN_SECRET}
+keycloak.client.base-url=https://auth.example.com
+keycloak.client.realm=tonino-platform
+keycloak.client.api-client-id=gestionale-api
+keycloak.client.admin-client-id=gestionale-admin
+keycloak.client.frontend-client-id=gestionale-web
+keycloak.client.admin-client-secret=${GESTIONALE_KEYCLOAK_ADMIN_SECRET}
 ```
 
-Realm, client API, client amministrativo e client frontend devono essere espliciti. `identity.app-id` identifica l'applicazione ospitante, ma non genera nomi Keycloak. URL, realm, client e secret sono obbligatori. La configurazione viene verificata all'avvio.
-
-Esempio per Identity Service:
+`base-url`, realm, client API, client amministrativo, client frontend e secret sono obbligatori. La configurazione viene verificata all'avvio. Se l'issuer pubblico e l'endpoint interno sono diversi, configurarli esplicitamente:
 
 ```properties
-identity.app-id=identity-service
-identity.keycloak.realm=tonino-platform
-identity.keycloak.api-client-id=identity-api
-identity.keycloak.admin-client-id=identity-admin
-identity.keycloak.frontend-client-id=identity-swagger
+keycloak.client.public-url=https://login.example.com
+keycloak.client.internal-url=http://keycloak:8080
 ```
 
-| Proprieta' | Variabile usata dal Compose e dai default della libreria |
-| --- | --- |
-| identity.app-id | APP_ID |
-| identity.keycloak.base-url | KEYCLOAK_URL |
-| identity.keycloak.realm | KEYCLOAK_REALM_NAME |
-| identity.keycloak.api-client-id | KEYCLOAK_CLIENT_ID |
-| identity.keycloak.admin-client-id | KC_ADMIN_CLIENT_ID |
-| identity.keycloak.frontend-client-id | KEYCLOAK_APP_CLIENT_ID |
-| identity.keycloak.admin-client-secret | KC_ADMIN_CLIENT_SECRET |
+Se `public-url` o `internal-url` non sono valorizzati, la libreria usa `base-url`.
 
-Le proprieta' esplicite dell'applicazione prevalgono sui default della libreria. I nomi `keycloak.host.*`, `keycloak.client.id` e `keycloak.admin.*` non sono piu' letti dai componenti aggiornati: migrare al namespace `identity.*`. Gli env gia' usati dal Compose restano supportati.
+Esempio di mapping nel servizio ospitante:
 
-L'app ospitante deve comunque configurare il datasource e il proprio schema, gli endpoint REST e la propria SecurityFilterChain. La libreria non impone i controller, Swagger o le regole di autorizzazione del servizio di esempio. Per l'autenticazione JWT usare `IdentityProperties.keycloak().realmUrl()` come issuer; i ruoli API sono sotto `resource_access[apiClientId]`.
+```properties
+keycloak.client.base-url=${KEYCLOAK_URL}
+keycloak.client.public-url=${KEYCLOAK_PUBLIC_URL:${KEYCLOAK_URL}}
+keycloak.client.internal-url=${KEYCLOAK_INTERNAL_URL:${KEYCLOAK_URL}}
+keycloak.client.realm=${KEYCLOAK_REALM_NAME}
+keycloak.client.api-client-id=${KEYCLOAK_CLIENT_ID}
+keycloak.client.admin-client-id=${KC_ADMIN_CLIENT_ID}
+keycloak.client.frontend-client-id=${KEYCLOAK_APP_CLIENT_ID}
+keycloak.client.admin-client-secret=${KC_ADMIN_CLIENT_SECRET}
+```
 
-Il setup Keycloak e' separato dal runtime: seguire [la guida di provisioning](../../services/keycloak/README.md). Il backend riceve `realm-management/manage-users` nel realm dell'app; non riceve credenziali di amministrazione del server. Le autorizzazioni dei chiamanti alle operazioni sulle persone restano responsabilita' dell'app ospitante.
+La libreria espone `KeycloakClientProperties`; per l'autenticazione JWT usare `publicRealmUrl()` come issuer, per le chiamate server-to-server usare `tokenUrl()` o gli URL admin generati dalla stessa classe. I ruoli API restano sotto `resource_access[apiClientId]`.
 
-Ogni contesto applicativo usa un solo realm. Per piu' applicazioni indipendenti configurare istanze/datasource separati. Il solo cambio di APP_ID non separa le tabelle di un database condiviso e non introduce un sistema multi-tenant.
+L'app ospitante deve comunque configurare datasource, schema, endpoint REST, SecurityFilterChain, Swagger e regole di autorizzazione. Il setup Keycloak e' separato dal runtime: seguire [la guida di provisioning](../../services/keycloak/README.md). Il backend riceve `realm-management/manage-users` nel realm dell'app; non riceve credenziali di amministrazione del server.
+
+Ogni contesto applicativo usa un solo realm. Per piu' applicazioni indipendenti configurare istanze/datasource separate.

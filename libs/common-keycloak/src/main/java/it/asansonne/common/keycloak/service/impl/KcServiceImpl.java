@@ -6,7 +6,7 @@ import static it.asansonne.common.keycloak.enums.KcUserPayloadKey.EMAIL;
 import static it.asansonne.common.keycloak.utils.RestCall.buildPayload;
 
 import it.asansonne.common.core.exception.custom.NotFoundException;
-import it.asansonne.common.keycloak.config.IdentityProperties;
+import it.asansonne.common.keycloak.config.KeycloakClientProperties;
 import it.asansonne.common.keycloak.dto.input.CreateKcGroup;
 import it.asansonne.common.keycloak.dto.input.CreateKcUser;
 import it.asansonne.common.keycloak.dto.input.UpdateKcUser;
@@ -40,7 +40,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class KcServiceImpl implements KcService {
 
-  private final IdentityProperties properties;
+  private final KeycloakClientProperties properties;
   public static final String KEYCLOAK = "KEYCLOAK";
   private final AdminRestHeadersProvider headersProvider;
   @Qualifier("keycloakRestErrorHandler")
@@ -48,7 +48,7 @@ public class KcServiceImpl implements KcService {
   private final RestClientExecutor restClient;
 
   public KcServiceImpl(
-      IdentityProperties properties,
+      KeycloakClientProperties properties,
       AdminRestHeadersProvider headersProvider,
       @Qualifier("keycloakRestErrorHandler") RestErrorHandler errorHandler,
       RestClientExecutor restClient
@@ -71,12 +71,12 @@ public class KcServiceImpl implements KcService {
     if (response.getStatusCode() == HttpStatus.OK) {
       return response.getBody();
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   @Override
   public KcGroup findGroupByUuid(UUID uuid) {
-    String url = UriComponentsBuilder.fromUriString(properties.keycloak().groupsUrl()).pathSegment(uuid.toString()).toUriString();
+    String url = UriComponentsBuilder.fromUriString(properties.groupsUrl()).pathSegment(uuid.toString()).toUriString();
     ResponseEntity<KcGroup> response = restClient.exchange(
         KEYCLOAK,
         url,
@@ -94,7 +94,7 @@ public class KcServiceImpl implements KcService {
   public KcUser findByEmail(String email) {
     ResponseEntity<KcUser[]> response = restClient.exchange(
         KEYCLOAK,
-        UriComponentsBuilder.fromUriString(properties.keycloak().usersUrl())
+        UriComponentsBuilder.fromUriString(properties.usersUrl())
             .queryParam(EMAIL.getKey(), email)
             .queryParam("exact", true)
             .toUriString(),
@@ -109,14 +109,14 @@ public class KcServiceImpl implements KcService {
       }
       throw new NotFoundException(URL_NOT_FOUND.getCode(), email);
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   @Override
   public Page<KcUser> findAll(Pageable pageable) {
     ResponseEntity<KcUser[]> response = restClient.exchange(
         KEYCLOAK,
-        UriComponentsBuilder.fromUriString(properties.keycloak().usersUrl())
+        UriComponentsBuilder.fromUriString(properties.usersUrl())
             .queryParam("first", pageable.getOffset())
             .queryParam("max", pageable.getPageSize())
             .toUriString(),
@@ -139,7 +139,7 @@ public class KcServiceImpl implements KcService {
   public List<KcGroup> findAllGroups() {
     ResponseEntity<KcGroup[]> response = restClient.exchange(
         KEYCLOAK,
-        UriComponentsBuilder.fromUriString(properties.keycloak().adminUrl())
+        UriComponentsBuilder.fromUriString(properties.adminUrl())
             .pathSegment("groups")
             .queryParam("briefRepresentation", false)
             .toUriString(),
@@ -158,7 +158,7 @@ public class KcServiceImpl implements KcService {
 
   @Override
   public KcUser createKcUser(CreateKcUser request) {
-    String url = UriComponentsBuilder.fromUriString(properties.keycloak().usersUrl()).toUriString();
+    String url = UriComponentsBuilder.fromUriString(properties.usersUrl()).toUriString();
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
         url,
@@ -170,14 +170,14 @@ public class KcServiceImpl implements KcService {
       log.info("Utente creato con successo su keycloak");
       return this.findUserByUuid(extractUuidFromLocation(response.getHeaders().getLocation(), url));
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   @Override
   public KcGroup createKcGroup(CreateKcGroup request) {
     String url = request.parentId() == null
-        ? properties.keycloak().groupsUrl()
-        : UriComponentsBuilder.fromUriString(properties.keycloak().groupsUrl())
+        ? properties.groupsUrl()
+        : UriComponentsBuilder.fromUriString(properties.groupsUrl())
         .pathSegment(request.parentId().toString(), "children").toUriString();
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
@@ -206,7 +206,7 @@ public class KcServiceImpl implements KcService {
       log.info("Utente aggiornato con successo su keycloak");
       return this.findUserByUuid(uuid);
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   @Override
@@ -222,14 +222,14 @@ public class KcServiceImpl implements KcService {
       log.info("Utente eliminato con successo su keycloak");
       return true;
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   @Override
   public Boolean deleteKcGroup(UUID uuid) {
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
-        UriComponentsBuilder.fromUriString(properties.keycloak().groupsUrl()).pathSegment(uuid.toString()).toUriString(),
+        UriComponentsBuilder.fromUriString(properties.groupsUrl()).pathSegment(uuid.toString()).toUriString(),
         HttpMethod.DELETE,
         new HttpEntity<>(headersProvider.build()),
         Void.class, errorHandler
@@ -238,7 +238,7 @@ public class KcServiceImpl implements KcService {
       log.info("Gruppo eliminato con successo su keycloak");
       return true;
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   @Override
@@ -254,14 +254,14 @@ public class KcServiceImpl implements KcService {
       log.info("Stato utente aggiornato con successo su keycloak");
       return true;
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   @Override
   public void addUserToGroup(UUID userUuid, UUID groupUuid) {
     ResponseEntity<Void> response = restClient.exchange(
         KEYCLOAK,
-        UriComponentsBuilder.fromUriString(properties.keycloak().usersUrl())
+        UriComponentsBuilder.fromUriString(properties.usersUrl())
             .pathSegment(userUuid.toString(), "groups", groupUuid.toString()).build()
             .toUriString(),
         HttpMethod.PUT,
@@ -272,13 +272,13 @@ public class KcServiceImpl implements KcService {
       log.info("Utente aggiunto al gruppo con successo su keycloak");
       return;
     }
-    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.keycloak().usersUrl(), response.getBody());
+    throw new KeycloakCallException(KEYCLOAK_CALL_ERROR.getCode(), properties.usersUrl(), response.getBody());
   }
 
   private long countUsers() {
     ResponseEntity<Integer> response = restClient.exchange(
         KEYCLOAK,
-        UriComponentsBuilder.fromUriString(properties.keycloak().usersUrl()).pathSegment("count").build().toUriString(),
+        UriComponentsBuilder.fromUriString(properties.usersUrl()).pathSegment("count").build().toUriString(),
         HttpMethod.GET,
         new HttpEntity<>(headersProvider.build()),
         Integer.class, errorHandler
@@ -287,7 +287,7 @@ public class KcServiceImpl implements KcService {
   }
 
   private String userUrl(UUID uuid) {
-    return UriComponentsBuilder.fromUriString(properties.keycloak().usersUrl())
+    return UriComponentsBuilder.fromUriString(properties.usersUrl())
         .pathSegment(uuid.toString())
         .build()
         .toUriString();

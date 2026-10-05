@@ -19,7 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class LoggingMdcFilter extends OncePerRequestFilter {
 
   private static final String CORRELATION_ID_HEADER = "x-correlation-id";
-  @Value("${info.app.name:${spring.application.name:${identity.app-id:identity}}}")
+  @Value("${info.app.name:${spring.application.name:${app.id:application}}}")
   private String serviceName;
 
   @Override

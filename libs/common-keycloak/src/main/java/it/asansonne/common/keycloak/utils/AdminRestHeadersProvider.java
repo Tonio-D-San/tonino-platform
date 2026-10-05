@@ -2,7 +2,7 @@ package it.asansonne.common.keycloak.utils;
 
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import it.asansonne.common.keycloak.config.IdentityProperties;
+import it.asansonne.common.keycloak.config.KeycloakClientProperties;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class AdminRestHeadersProvider implements RestHeadersProvider {
 
-  private final IdentityProperties properties;
+  private final KeycloakClientProperties properties;
 
   private final RestTemplate restTemplate;
 
@@ -29,11 +29,11 @@ public class AdminRestHeadersProvider implements RestHeadersProvider {
 
     MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
     form.add("grant_type", "client_credentials");
-    form.add("client_id", properties.keycloak().adminClientId());
-    form.add("client_secret", properties.keycloak().adminClientSecret());
+    form.add("client_id", properties.adminClientId());
+    form.add("client_secret", properties.adminClientSecret());
 
     ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-        properties.keycloak().realmUrl() + "/protocol/openid-connect/token",
+        properties.tokenUrl(),
         HttpMethod.POST,
         new HttpEntity<>(form, formHeaders),
         new ParameterizedTypeReference<>() {

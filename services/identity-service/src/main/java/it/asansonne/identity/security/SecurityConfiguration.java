@@ -2,7 +2,7 @@ package it.asansonne.identity.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.asansonne.common.core.handler.AuthorizationAuthenticationHandler;
-import it.asansonne.common.keycloak.config.IdentityProperties;
+import it.asansonne.common.keycloak.config.KeycloakClientProperties;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
   private final AuthorizationAuthenticationHandler handler;
-  private final IdentityProperties properties;
+  private final KeycloakClientProperties properties;
 
   @Value("${api.base-path}")
   String apiBasePath;
@@ -103,7 +103,7 @@ public class SecurityConfiguration {
     @RequiredArgsConstructor
     static class KeycloakAuthoritiesConverter
         implements Converter<Jwt, List<SimpleGrantedAuthority>> {
-      private final IdentityProperties properties;
+      private final KeycloakClientProperties properties;
 
       @Override
       @SuppressWarnings({"unchecked"})
@@ -111,8 +111,7 @@ public class SecurityConfiguration {
         final var realmAccess = (Map<String, Object>) jwt.getClaims()
             .getOrDefault("resource_access", Map.of());
         final var client =
-            (Map<String, Object>) realmAccess.getOrDefault(properties.keycloak().apiClientId(),
-                Map.of());
+            (Map<String, Object>) realmAccess.getOrDefault(properties.apiClientId(), Map.of());
         final var roles = (List<String>) client
             .getOrDefault("roles", List.of());
         final String clientScope = (String) jwt.getClaims()
@@ -133,7 +132,7 @@ public class SecurityConfiguration {
   ) {
     Map<String, AuthenticationManager> managers = new ConcurrentHashMap<>();
     var trustedIssuers = new HashSet<String>();
-    trustedIssuers.add(properties.keycloak().realmUrl());
+    trustedIssuers.add(properties.publicRealmUrl());
     if (ngrokIssuer != null && !ngrokIssuer.isBlank()) {
       trustedIssuers.add(ngrokIssuer);
     }
@@ -156,7 +155,7 @@ public class SecurityConfiguration {
             NimbusJwtDecoder decoder = JwtDecoders.fromIssuerLocation(iss);
             decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
                 JwtValidators.createDefaultWithIssuer(iss),
-                new AudienceValidator(properties.keycloak().apiClientId())
+                new AudienceValidator(properties.apiClientId())
             ));
             JwtAuthenticationProvider provider = new JwtAuthenticationProvider(decoder);
             provider.setJwtAuthenticationConverter(authenticationConverter);

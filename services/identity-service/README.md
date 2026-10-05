@@ -49,7 +49,7 @@ Per incorporare le librerie Identity in un altro microservizio, vedere [la guida
 
 ## Pubblicazione delle librerie aggiornate
 
-Identity Service richiede `platform.version=1.1.0`, che include `IdentityProperties`. La precedente 1.0.0 pubblicata non contiene questa classe. Dalla radice, pubblicare il parent e tutti i moduli con:
+Identity Service richiede `platform.version=1.1.0`, che include `KeycloakClientProperties`. La precedente 1.0.0 pubblicata non contiene questa classe. Dalla radice, pubblicare il parent e tutti i moduli con:
 
 ```powershell
 ./mvn-deploy.cmd
