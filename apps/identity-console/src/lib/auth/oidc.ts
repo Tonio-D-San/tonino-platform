@@ -9,9 +9,11 @@ export const oidcConfig: AuthProviderProps = {
   redirect_uri: appOrigin,
   post_logout_redirect_uri: appOrigin,
   response_type: "code",
-  scope: "openid profile email identity-api-audience",
+  scope: "openid",
   automaticSilentRenew: true,
   onSigninCallback: () => {
     window.history.replaceState({}, document.title, window.location.pathname);
   },
 };
+
+
