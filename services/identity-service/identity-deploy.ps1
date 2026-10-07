@@ -52,7 +52,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "==> Deploy identity-service ($Profile)..."
-docker compose @ComposeArgs up -d --no-deps identity-service
+docker compose @ComposeArgs up -d --no-build identity-service
 if ($LASTEXITCODE -ne 0) {
     throw "Deploy identity-service fallito."
 }

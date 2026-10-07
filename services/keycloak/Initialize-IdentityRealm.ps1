@@ -1,5 +1,5 @@
 <#
-Creates missing resources and reconciles the three Identity clients in an existing realm.
+Creates missing resources and reconciles the Identity clients in an existing realm.
 Uses Compose interpolation as the single source of names, URLs and secrets.
 No realm/user deletion. Existing custom client mappers, attributes and redirects are retained.
 #>
@@ -34,7 +34,7 @@ $rendered = [regex]::Replace($template, '\$\{([A-Z_]+)\}', {
 $realm = $rendered | ConvertFrom-Json
 if ($vars.APP_ID -notmatch '^[a-z][a-z0-9-]*$') { throw 'APP_ID must be a lowercase application identifier.' }
 $clientIds = @($realm.clients | ForEach-Object { $_.clientId })
-if (@($clientIds | Select-Object -Unique).Count -ne 3) { throw 'The three client IDs must be distinct.' }
+if (@($clientIds | Select-Object -Unique).Count -ne $clientIds.Count) { throw 'Client IDs must be distinct.' }
 $clientScopeNames = @($realm.clientScopes | ForEach-Object { $_.name })
 if ($clientScopeNames.Count -ne @($clientScopeNames | Select-Object -Unique).Count) {
     throw 'Client scope names must be distinct.'
@@ -67,7 +67,9 @@ function Invoke-Admin([string]$Method, [string]$Path, $Body = $null) {
         $request.ContentType = 'application/json; charset=utf-8'
         $request.Body = [Text.Encoding]::UTF8.GetBytes((ConvertTo-Json -InputObject $Body -Depth 100 -Compress))
     }
-    Invoke-RestMethod @request
+    # Enumerate JSON arrays before callers filter scopes, clients or groups.
+    $response = Invoke-RestMethod @request
+    return $response
 }
 $realmPath = '/' + [uri]::EscapeDataString($realm.realm)
 try { $null = Invoke-Admin Get $realmPath }
@@ -142,6 +144,27 @@ foreach ($desired in $realm.clients) {
         $existing | Add-Member -MemberType NoteProperty -Name $name -Value $value -Force
     }
     $null = Invoke-Admin Put "$realmPath/clients/$($existing.id)" $existing
+}
+# Updating a client representation does not update its scope associations.
+# Use the dedicated endpoints, adding managed scopes without removing custom ones.
+$availableScopes = @(Invoke-Admin Get "$realmPath/client-scopes")
+foreach ($desired in $realm.clients) {
+    $query = [uri]::EscapeDataString($desired.clientId)
+    $client = @(Invoke-Admin Get "$realmPath/clients?clientId=$query") |
+        Where-Object { $_.clientId -eq $desired.clientId } | Select-Object -First 1
+    foreach ($type in @('default', 'optional')) {
+        $property = "${type}ClientScopes"
+        if (!$desired.$property) { continue }
+        $path = "$realmPath/clients/$($client.id)/$type-client-scopes"
+        $assigned = @(Invoke-Admin Get $path)
+        foreach ($name in $desired.$property) {
+            $scope = $availableScopes | Where-Object { $_.name -eq $name } | Select-Object -First 1
+            if (!$scope) { throw "Missing client scope: $name" }
+            if (!($assigned | Where-Object { $_.id -eq $scope.id })) {
+                $null = Invoke-Admin Put "$path/$($scope.id)"
+            }
+        }
+    }
 }
 foreach ($group in $realm.groups) {
     $search = [uri]::EscapeDataString($group.name)

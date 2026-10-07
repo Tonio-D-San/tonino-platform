@@ -12,9 +12,6 @@ services:
     command: start-dev --import-realm
     ports:
       - "127.0.0.1:5443:8080"
-    networks:
-      default:
-        aliases: [keycloak.localhost]
   mailpit:
     image: axllent/mailpit:latest
     ports:

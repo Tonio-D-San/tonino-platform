@@ -12,6 +12,7 @@ function docker {
                 APP_ID = 'identity-service'; KEYCLOAK_REALM_NAME = 'tonino-platform'
                 KEYCLOAK_CLIENT_ID = 'identity-api'; KC_ADMIN_CLIENT_ID = 'identity-admin'
                 KEYCLOAK_APP_CLIENT_ID = 'identity-swagger'; KC_ADMIN_CLIENT_SECRET = 'test-"secret\value'
+                KEYCLOAK_CONSOLE_CLIENT_ID = 'identity-console'
                 APPLICATION_URL = 'http://localhost:8082'; FRONTEND_URL = 'http://localhost:3000'
                 KC_HOSTNAME = 'http://keycloak.localhost:5443'
             } }
@@ -38,14 +39,16 @@ function Invoke-RestMethod {
         return
     }
     if ($Method -eq 'Get' -and $path -eq '/tonino-platform/client-scopes') {
-        return @($identityRealmTestState.clientScopes.Values)
+        # Invoke-RestMethod emits a JSON array as one pipeline object.
+        Write-Output -NoEnumerate @($identityRealmTestState.clientScopes.Values)
+        return
     }
     if ($Method -eq 'Post' -and $path -eq '/tonino-platform/client-scopes') {
         $data | Add-Member id $data.name
         $identityRealmTestState.clientScopes[$data.name] = $data
         return
     }
-    if ($path -match '^/tonino-platform/client-scopes/(identity-api-audience)$') {
+    if ($path -match '^/tonino-platform/client-scopes/([^/]+)$') {
         $name = $matches[1]
         if ($Method -eq 'Get') { return $identityRealmTestState.clientScopes[$name] }
         if ($Method -eq 'Put') { $identityRealmTestState.clientScopes[$name] = $data; return }
@@ -61,10 +64,30 @@ function Invoke-RestMethod {
         $identityRealmTestState.clients[$data.clientId] = $data
         return
     }
-    if ($path -match '^/tonino-platform/clients/(identity-(?:api|admin|swagger))$') {
+    if ($path -match '^/tonino-platform/clients/(identity-(?:api|admin|swagger|console))$') {
         $id = $matches[1]
         if ($Method -eq 'Get') { return $identityRealmTestState.clients[$id] }
-        if ($Method -eq 'Put') { $identityRealmTestState.clients[$id] = $data; return }
+        if ($Method -eq 'Put') {
+            # Keycloak ignores scope associations in a client update.
+            $data | Add-Member defaultClientScopes $identityRealmTestState.clients[$id].defaultClientScopes -Force
+            $identityRealmTestState.clients[$id] = $data
+            return
+        }
+    }
+    if ($path -match '^/tonino-platform/clients/(identity-(?:admin|swagger|console))/(default|optional)-client-scopes(?:/([^/]+))?$') {
+        $id = $matches[1]
+        $property = $matches[2] + 'ClientScopes'
+        $scopeName = $matches[3]
+        if ($Method -eq 'Get') {
+            return @($identityRealmTestState.clients[$id].$property | ForEach-Object {
+                [pscustomobject]@{ id = $_; name = $_ }
+            })
+        }
+        if ($Method -eq 'Put' -and $scopeName) {
+            $client = $identityRealmTestState.clients[$id]
+            $client | Add-Member $property (@($client.$property) + @($scopeName) | Select-Object -Unique) -Force
+            return
+        }
     }
     if ($Method -eq 'Get' -and $path -like '/tonino-platform/groups?*') { return $identityRealmTestState.groups }
     if ($Method -eq 'Post' -and $path -eq '/tonino-platform/groups') { $identityRealmTestState.groups += $data; return }
@@ -77,18 +100,33 @@ function Invoke-RestMethod {
     throw "Unexpected API call: $Method $path"
 }
 $setup = Join-Path $PSScriptRoot '../Initialize-IdentityRealm.ps1'
+$template = Get-Content -Raw (Join-Path $PSScriptRoot '../identity-service.json') | ConvertFrom-Json
+$definedScopes = @($template.clientScopes | ForEach-Object { $_.name })
+foreach ($client in $template.clients) {
+    foreach ($name in $client.defaultClientScopes) {
+        if ($definedScopes -notcontains $name) { throw "Realm import references an undefined scope: $name" }
+    }
+}
+$basic = $template.clientScopes | Where-Object { $_.name -eq 'basic' }
+if (!($basic.protocolMappers | Where-Object {
+    $_.protocolMapper -eq 'oidc-sub-mapper' -and $_.config.'access.token.claim' -eq 'true'
+})) { throw 'Access tokens must include the user subject.' }
 $credential = [PSCredential]::new('test-admin', (ConvertTo-SecureString 'test-password' -AsPlainText -Force))
 & $setup -EnvFile 'mock.env' -AdminCredential $credential
 $frontend = $identityRealmTestState.clients['identity-swagger']
 $frontend.redirectUris += 'https://custom.example.com/callback'
+# Reproduce an existing realm whose clients only have the audience scope linked.
+foreach ($id in @('identity-admin', 'identity-swagger', 'identity-console')) {
+    $identityRealmTestState.clients[$id].defaultClientScopes = @('identity-api-audience')
+}
 $frontend.defaultClientScopes += 'custom-scope'
 $frontend.attributes | Add-Member 'custom-setting' 'keep'
 $frontend.protocolMappers += [pscustomobject]@{ id = 'custom'; name = 'custom-mapper' }
 $scope = $identityRealmTestState.clientScopes['identity-api-audience']
 $scope.protocolMappers += [pscustomobject]@{ id = 'custom-scope-mapper'; name = 'custom-scope-mapper' }
 & $setup -EnvFile 'mock.env' -AdminCredential $credential
-if ($identityRealmTestState.realmCreates -ne 1 -or $identityRealmTestState.clients.Count -ne 3 -or
-    $identityRealmTestState.clientScopes.Count -ne 1 -or $identityRealmTestState.groups.Count -ne 2 -or
+if ($identityRealmTestState.realmCreates -ne 1 -or $identityRealmTestState.clients.Count -ne 4 -or
+    $identityRealmTestState.clientScopes.Count -ne 7 -or $identityRealmTestState.groups.Count -ne 2 -or
     $identityRealmTestState.roles.Count -ne 1) {
     throw 'Repeated provisioning created duplicate resources.'
 }
@@ -112,4 +150,11 @@ if ($identityRealmTestState.clients['identity-admin'].defaultClientScopes -notco
     throw 'Backend client is missing the API audience client scope.'
 }
 if ($identityRealmTestState.clients['identity-admin'].secret -ne 'test-"secret\value') { throw 'Secret JSON escaping failed.' }
-Write-Output 'PASS: create, repeat, preserve custom settings, service-account grant and secret escaping.'
+foreach ($clientId in @('identity-admin', 'identity-swagger', 'identity-console')) {
+    foreach ($name in @('basic', 'profile', 'email', 'roles', 'web-origins', 'acr', 'identity-api-audience')) {
+        if ($identityRealmTestState.clients[$clientId].defaultClientScopes -notcontains $name) {
+            throw "Missing scope $name on $clientId."
+        }
+    }
+}
+Write-Output 'PASS: complete OIDC scopes, four clients, repeat, preserve custom settings, service-account grant and secret escaping.'

@@ -2,6 +2,7 @@
 name: tonino-platform-${SPRING_PROFILES_ACTIVE:?Select dev or prod}
 services:
   identity-service:
+    image: identity-service:1.0.0
     build:
       context: .
       dockerfile: Dockerfile

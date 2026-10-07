@@ -7,6 +7,8 @@ docker compose --env-file services/identity-service/.env.dev -f services/identit
 ```
 
 Per produzione sostituire entrambe le occorrenze di `dev` con `prod`.
+Compose costruisce l'immagine `identity-service:1.0.0`; non serve una build Docker separata.
+Per gli avvii successivi usare `./services/identity-service/identity-deploy.ps1 -Profile dev`: costruisce una sola volta e avvia il servizio con PostgreSQL e Keycloak, senza una seconda build.
 `--env-file` serve a Compose per interpolare le variabili; il container riceve quelle dichiarate in `environment`.
 Gli env locali sono ignorati da Git. `.env.template` documenta le variabili e va compilato con le credenziali.
 `MAVEN_SETTINGS_FILE` deve indicare un settings.xml esistente con accesso al repository Maven GitHub Packages.
@@ -14,17 +16,17 @@ La build Docker usa soltanto Identity Service come contesto. Maven scarica le li
 
 ## Sviluppo
 
-- Profilo Spring `dev`, aggiornamento automatico dello schema e Swagger abilitati.
+- Profilo Spring `dev`, migration Flyway, validazione dello schema e Swagger abilitati.
 - Identity Service: http://localhost:8082/swagger-ui/index.html.
-- Keycloak: http://keycloak.localhost:5443. Il nome deve risolvere a 127.0.0.1 sul computer; se necessario aggiungere `127.0.0.1 keycloak.localhost` al file hosts. Nel container e' un alias di rete di Keycloak, sulla stessa porta 5443. Usare questo URL anche per ottenere i token.
+- Keycloak pubblico: http://keycloak.localhost:5443, usato dal browser e come issuer dei JWT. Il nome deve risolvere a 127.0.0.1 sul computer. Tra container si usa `http://keycloak:8080` per JWKS e chiamate amministrative; `5443` e' soltanto la porta pubblicata sull'host.
 - PostgreSQL: localhost:5433; Mailpit: http://localhost:8025 (non configura automaticamente SMTP nel realm).
 - SonarQube e' opzionale: aggiungere `--profile quality` prima di `up`.
 
-Per eseguire Identity Service dall'IDE avviare soltanto `postgres keycloak mailpit` con lo stesso comando Compose e importare `.env.dev` nella configurazione di esecuzione. Spring non carica automaticamente i file `.env`; senza profilo esplicito usa `dev`.
+Per eseguire Identity Service dall'IDE avviare soltanto `postgres keycloak mailpit` con lo stesso comando Compose e importare `.env.dev` nella configurazione di esecuzione, sovrascrivendo `KEYCLOAK_INTERNAL_URL=http://localhost:5443`. Il nome Docker `keycloak` e' raggiungibile soltanto dai container. Spring non carica automaticamente i file `.env`; senza profilo esplicito usa `dev`.
 
 ## Produzione
 
-Compilare `.env.prod` con domini HTTPS reali al posto di example.com e credenziali adeguate. L'override presume un reverse proxy sull'host: Identity Service e Keycloak pubblicano porte soltanto su loopback; PostgreSQL non pubblica porte. Il dominio pubblico di Keycloak deve essere raggiungibile anche dal container Identity Service, per discovery, validazione JWT e chiamate amministrative.
+Compilare `.env.prod` con domini HTTPS reali al posto di example.com e credenziali adeguate. L'override presume un reverse proxy sull'host: Identity Service e Keycloak pubblicano porte soltanto su loopback; PostgreSQL non pubblica porte. `KEYCLOAK_PUBLIC_URL` identifica l'issuer e gli endpoint del browser; `KEYCLOAK_INTERNAL_URL=http://keycloak:8080` serve a Identity per JWKS e chiamate amministrative.
 
 Il profilo `prod` applica le migration Flyway e poi Hibernate valida lo schema senza modificarlo. Swagger e dettagli health sono disabilitati; Keycloak usa `start`, con TLS terminato dal proxy e header X-Forwarded impostati dal proxy.
 
