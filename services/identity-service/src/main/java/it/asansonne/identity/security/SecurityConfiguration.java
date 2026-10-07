@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -36,6 +37,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Slf4j
 @Configuration
@@ -47,6 +51,12 @@ public class SecurityConfiguration {
   String apiBasePath;
   @Value("${application.issuer.ngrok:}")
   String ngrokIssuer;
+  @Value("${server.cors.allowed.methods:GET,POST,PATCH,DELETE,OPTIONS}")
+  String allowedMethods;
+  @Value("${server.cors.allowed.origins:*}")
+  String allowedOrigins;
+  @Value("${server.cors.allowed.headers:*}")
+  String allowedHeaders;
 
   @Bean
   protected SecurityFilterChain filterChain(
@@ -75,6 +85,8 @@ public class SecurityConfiguration {
                 "/actuator/info",
                 "/error"
             ).permitAll()
+            .requestMatchers(HttpMethod.OPTIONS, "/**")
+            .permitAll()
             .requestMatchers(apiBasePath + "/**")
             .authenticated()
             .anyRequest()
@@ -87,6 +99,17 @@ public class SecurityConfiguration {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN)
             )
         ).build();
+  }
+
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(split(allowedOrigins));
+    configuration.setAllowedMethods(split(allowedMethods));
+    configuration.setAllowedHeaders(split(allowedHeaders));
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration(apiBasePath + "/**", configuration);
+    return source;
   }
 
   @Component
@@ -173,6 +196,13 @@ public class SecurityConfiguration {
 
   private String jwkSetUri() {
     return properties.internalRealmUrl() + "/protocol/openid-connect/certs";
+  }
+
+  private static List<String> split(String value) {
+    return Arrays.stream(value.split(","))
+        .map(String::trim)
+        .filter(item -> !item.isBlank())
+        .toList();
   }
 
   private static String extractBearer(HttpServletRequest request) {

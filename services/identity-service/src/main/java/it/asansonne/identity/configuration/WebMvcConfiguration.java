@@ -1,5 +1,6 @@
 package it.asansonne.identity.configuration;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -13,19 +14,25 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
   @Value("${api.base-path}")
   private String apiBasePath;
   @Value("${server.cors.allowed.methods:GET,POST,PATCH,DELETE}")
-  private String[] allowedMethods;
+  private String allowedMethods;
   @Value("${server.cors.allowed.origins:*}")
-  private String[] allowedOrigins;
+  private String allowedOrigins;
   @Value("${server.cors.allowed.headers:*}")
-  private String[] allowedHeaders;
+  private String allowedHeaders;
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry
         .addMapping(apiBasePath + "/**")
-        .allowedOrigins(allowedOrigins)
-        .allowedMethods(allowedMethods)
-        .allowedHeaders(allowedHeaders)
-        .allowedOriginPatterns();
+        .allowedOrigins(split(allowedOrigins))
+        .allowedMethods(split(allowedMethods))
+        .allowedHeaders(split(allowedHeaders));
+  }
+
+  private static String[] split(String value) {
+    return Arrays.stream(value.split(","))
+        .map(String::trim)
+        .filter(s -> !s.isBlank())
+        .toArray(String[]::new);
   }
 }
