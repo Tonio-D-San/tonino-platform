@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
@@ -66,7 +67,11 @@ public class OpenApiConfiguration {
                 .description("common.security.oauth2.description")
                 .flows(new OAuthFlows().authorizationCode(new OAuthFlow()
                     .authorizationUrl(authUrl + "/auth")
-                    .tokenUrl(authUrl + "/token"))
+                    .tokenUrl(authUrl + "/token")
+                    .scopes(new Scopes()
+                        .addString("openid", "OpenID Connect")
+                        .addString("profile", "User profile")
+                        .addString("email", "User email")))
                 )
         )).security(Collections.singletonList(
             new SecurityRequirement().addList(SEC_SCHEME_OAUTH2)

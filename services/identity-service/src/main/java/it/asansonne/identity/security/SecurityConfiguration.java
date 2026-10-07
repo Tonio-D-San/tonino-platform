@@ -120,9 +120,16 @@ public class SecurityConfiguration {
 
     @Override
     public JwtAuthenticationToken convert(@NonNull Jwt jwt) {
+      String principalName = jwt.getSubject();
+      if (principalName == null || principalName.isBlank()) {
+        principalName = jwt.getClaimAsString("preferred_username");
+      }
+      if (principalName == null || principalName.isBlank()) {
+        throw new BadCredentialsException("Missing JWT subject");
+      }
       return new JwtAuthenticationToken(
           jwt, Objects.requireNonNull(authoritiesConverter.convert(jwt)),
-          Objects.requireNonNull(jwt.getSubject())
+          principalName
       );
     }
 

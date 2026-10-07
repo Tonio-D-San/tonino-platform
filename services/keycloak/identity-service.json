@@ -55,7 +55,14 @@
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true,
       "fullScopeAllowed": true,
-      "defaultClientScopes": ["${KEYCLOAK_CLIENT_ID}-audience"]
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "roles",
+        "web-origins",
+        "acr",
+        "${KEYCLOAK_CLIENT_ID}-audience"
+      ]
     },
     {
       "clientId": "${KEYCLOAK_CLIENT_ID}",
@@ -92,7 +99,14 @@
       "attributes": {
         "pkce.code.challenge.method": "S256"
       },
-      "defaultClientScopes": ["${KEYCLOAK_CLIENT_ID}-audience"],
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "roles",
+        "web-origins",
+        "acr",
+        "${KEYCLOAK_CLIENT_ID}-audience"
+      ],
       "protocolMappers": [
         {
           "name": "platform-groups",
@@ -133,7 +147,14 @@
         "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "${FRONTEND_URL}##${FRONTEND_URL}/*"
       },
-      "defaultClientScopes": ["${KEYCLOAK_CLIENT_ID}-audience"],
+      "defaultClientScopes": [
+        "profile",
+        "email",
+        "roles",
+        "web-origins",
+        "acr",
+        "${KEYCLOAK_CLIENT_ID}-audience"
+      ],
       "protocolMappers": [
         {
           "name": "platform-groups",
