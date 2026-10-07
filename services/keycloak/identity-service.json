@@ -162,6 +162,24 @@
           "manage-users"
         ]
       }
+    },
+    {
+      "username": "tonino",
+      "enabled": true,
+      "firstName": "Anto",
+      "lastName": "Nio",
+      "email": "anto@nio.com",
+      "emailVerified": true,
+      "groups": [
+        "/platform-users"
+      ],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Password@0",
+          "temporary": false
+        }
+      ]
     }
   ]
 }
