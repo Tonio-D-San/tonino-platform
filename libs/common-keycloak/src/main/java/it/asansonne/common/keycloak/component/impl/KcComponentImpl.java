@@ -42,6 +42,7 @@ public class KcComponentImpl implements KcComponent {
       log.error("Errore durante l'aggiunta dell'utente {} al gruppo {} su keycloak",
           kcUser.email(), user.groupUuid(), ex);
       this.deleteKcUser(kcUser.id());
+      throw ex;
     }
     return kcUser;
   }

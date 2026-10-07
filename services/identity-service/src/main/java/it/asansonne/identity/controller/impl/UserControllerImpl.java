@@ -1,0 +1,90 @@
+package it.asansonne.identity.controller.impl;
+
+import it.asansonne.common.identity.dto.request.CreateUser;
+import it.asansonne.common.identity.dto.request.FilterUser;
+import it.asansonne.common.identity.dto.request.UpdateUser;
+import it.asansonne.common.identity.dto.response.User;
+import it.asansonne.identity.controller.UserController;
+import it.asansonne.rest.jpa.identityservice.csr.component.UserComponent;
+import java.security.Principal;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("${api.base-path}${api.resource.users}")
+@AllArgsConstructor
+public class UserControllerImpl implements UserController {
+  private final UserComponent component;
+
+  @Override
+  public User me(Principal principal) {
+    return component.me(principal);
+  }
+
+  @Override
+  public User findByName(Principal principal, String name) {
+    return component.findByName(principal, name);
+  }
+
+  @Override
+  public User findBySurname(Principal principal, String surname) {
+    return component.findBySurname(principal, surname);
+  }
+
+  @Override
+  public User findByEmail(Principal principal, String email) {
+    return component.findByEmail(principal, email);
+  }
+
+  @Override
+  public User findByUuid(Principal principal, UUID uuid) {
+    return component.findByUuid(principal, uuid);
+  }
+
+  @Override
+  public Page<User> findByIsActive(Principal principal, Boolean isActive, Integer page,
+                                   Integer size, String direction) {
+    return component.findByIsActive(principal, PageRequest.of(
+        page == null ? 0 : page,
+        size == null ? 20 : size,
+        Sort.by(
+            Sort.Direction.fromString(direction == null || direction.isBlank() ? "ASC" : direction),
+            UPDATED_AT
+        )
+    ), isActive);
+  }
+
+  @Override
+  public Page<User> findAll(Principal principal, FilterUser filter, Integer page, Integer size,
+                            String direction) {
+    return component.findAll(principal, filter, PageRequest.of(
+        page == null ? 0 : page,
+        size == null ? 20 : size,
+        Sort.by(
+            Sort.Direction.fromString(direction == null || direction.isBlank() ? "ASC" : direction),
+            UPDATED_AT
+        )
+    ));
+  }
+
+  @Override
+  public User create(Principal principal, CreateUser request) {
+    return component.create(principal, request);
+  }
+
+  @Override
+  public void updateByUuid(Principal principal, UUID uuid, UpdateUser request) {
+    component.updateByUuid(principal, uuid, request);
+  }
+
+  @Override
+  public void deleteByUuid(Principal principal, UUID uuid) {
+    component.deleteByUuid(principal, uuid);
+  }
+
+}
