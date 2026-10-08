@@ -1,0 +1,26 @@
+name: tonino-platform
+
+services:
+  traefik:
+    image: traefik:v3.4
+    container_name: tonino-proxy
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=tonino-edge"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true
+    name: tonino-edge
